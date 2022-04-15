@@ -17,6 +17,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: 'Deploy configuration to NGINX deployment'
+    - name: 'Deploy configuration to the NGINX deployment in Azure'
       run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-file-path }}
       shell: bash

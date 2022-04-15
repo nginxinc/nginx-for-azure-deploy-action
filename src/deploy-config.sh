@@ -29,7 +29,7 @@ uuid="$(cat /proc/sys/kernel/random/uuid)"
 templateFile="template-$uuid.json"
 templateDeploymentName="${nginxDeploymentName:0:20}-$uuid"
 
-wget -O "$templateFile" https://raw.githubusercontent.com/bangbingsyb/azure-quickstart-templates/master/quickstarts/nginx.nginxplus/nginx-single-configuration-file/azuredeploy.json
+wget -O "$templateFile" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/main/src/nginx-for-azure-configuration-template.json
 echo "Downloaded the ARM template for deploying NGINX configuration"
 cat "$templateFile"
 echo ""
