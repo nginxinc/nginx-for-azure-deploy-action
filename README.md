@@ -26,7 +26,7 @@ jobs:
     - name: 'Checkout repository'
       uses: actions/checkout@v2
 
-    - name: 'Run Azure Login with OIDC'
+    - name: 'Run Azure Login using Azure Service Principal with a secret'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -64,7 +64,7 @@ jobs:
     - name: 'Checkout repository'
       uses: actions/checkout@v2
 
-    - name: 'Run Azure Login with OIDC'
+    - name: 'Run Azure Login using OIDC'
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
