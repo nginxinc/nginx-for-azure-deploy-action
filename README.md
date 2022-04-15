@@ -4,7 +4,13 @@ This action syncs NGINX configuration files in the repository to an NGINX deploy
 
 ## Usage example
 
-The following example updates the App Configuration instance each time a change is made to `appsettings.json` in the `master` branch.
+The following example updates the configuration of a NGINX deployment in Azure each time a change is made to the configuration file in config folder in the `main` branch.
+
+### Sample workflow that authenticates with Azure using Azure Service Principal with a secret
+
+To be added
+
+### Sample workflow that authenticates with Azure using OIDC
 
 ```yaml
 # File: .github/workflows/nginxForAzureDeploy.yml
@@ -22,11 +28,11 @@ permissions:
       contents: read
 
 env:
-  AZURE_TENANT_ID: '<Tenant ID>'
-  AZURE_CLIENT_ID: '<Client ID >'
-  AZURE_SUBSCRIPTION_ID: '<The ID of the subscription of the NGINX deployment>'
-  AZURE_RESOURCE_GROUP_NAME: '<The name of the resource group of the NGINX deployment>'
-  NGINX_DEPLOYMENT_NAME: '<The name of the NGINX deployment to deploy configuration>'
+  AZURE_TENANT_ID: '<The Azure Active Directory tenant ID>'
+  AZURE_CLIENT_ID: '<The client ID of the Azure Service Principal to perform the deployment>'
+  AZURE_SUBSCRIPTION_ID: '<The Azure subscription ID of the NGINX deployment>'
+  AZURE_RESOURCE_GROUP_NAME: '<The resource group of the NGINX deployment>'
+  NGINX_DEPLOYMENT_NAME: '<The name of the NGINX deployment>'
   NGINX_CONFIG_FILE: '<The relative path of the configuration file in the repository>'
 
 jobs:
@@ -44,7 +50,7 @@ jobs:
         subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
     - name: 'Sync NGINX configuration to NGINX on Azure instance'
-      uses: bangbingsyb/nginx-config-sync-action@v1
+      uses: nginxinc/nginx-for-azure-deploy-action@v1
       with:
         subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ env.AZURE_RESOURCE_GROUP_NAME }}
