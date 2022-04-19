@@ -1,7 +1,6 @@
 #!/bin/bash
-
-# Stop on error.
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 subscriptionId=$1
 resourceGroupName=$2
@@ -11,12 +10,10 @@ nginxConfigurationFile=$4
 # Read and encode the NGINX configuration file content.
 if [ -f "$nginxConfigurationFile" ]
 then
-    echo "NGINX configuration"
-    cat "$nginxConfigurationFile"
-    echo ""
+    echo "The NGINX configuration file was found."
 else 
-    echo "NGINX configuration $nginxConfigurationFile does not exist."
-    exit 32
+    echo "The NGINX configuration file $nginxConfigurationFile does not exist."
+    exit 2
 fi
 
 encodedConfigContent=$(base64 $nginxConfigurationFile)

@@ -10,13 +10,13 @@ inputs:
   nginx-deployment-name:
     description: 'The name of the NGINX deployment'
     required: true
-  nginx-config-file-path:
-    description: 'The file path of the NGINX configuration file in the Git repository'
+  nginx-config-relative-file-path:
+    description: 'The relative file path of the NGINX configuration file in the Git repository'
     required: true
     default: './config/nginx.conf'
 runs:
   using: "composite"
   steps:
     - name: 'Deploy configuration to the NGINX deployment in Azure'
-      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-file-path }}
+      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-relative-file-path }}
       shell: bash
