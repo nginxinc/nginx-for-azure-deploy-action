@@ -37,7 +37,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
         nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
-        nginx-config-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
+        nginx-config-relative-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
 ```
 
 ### Sample workflow that authenticates with Azure using OIDC
@@ -77,5 +77,5 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
         nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
-        nginx-config-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
+        nginx-config-relative-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
 ```
