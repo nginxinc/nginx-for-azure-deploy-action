@@ -7,7 +7,7 @@ resource_group_name=$2
 nginx_deployment_name=$3
 config_dir_path=$4
 root_config_file_name=$5
-transformed_config_dir_path=$6
+transformed_config_dir_path=${6:-''}
 
 # Validation and preprocessing
 
