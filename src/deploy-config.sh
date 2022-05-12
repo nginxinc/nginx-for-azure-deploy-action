@@ -38,7 +38,7 @@ else
     exit 2
 fi
 
-if [[ ! -z "$transformed_config_dir_path" ]]
+if [[ -n "$transformed_config_dir_path" ]]
 then
     if [[ ! "$transformed_config_dir_path" = /* ]]
     then
@@ -76,7 +76,7 @@ uuid="$(cat /proc/sys/kernel/random/uuid)"
 template_file="template-$uuid.json"
 template_deployment_name="${nginx_deployment_name:0:20}-$uuid"
 
-wget -O "$templateFile" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/main/src/nginx-for-azure-configuration-template.json
+wget -O "$template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/main/src/nginx-for-azure-configuration-template.json
 echo "Downloaded the ARM template for synchronizing NGINX configuration."
 cat "$template_file"
 echo ""
