@@ -11,7 +11,7 @@ The following example updates the configuration of a NGINX deployment in Azure e
 ```yaml
 # File: .github/workflows/nginxForAzureDeploy.yml
 
-name: Sync configuration to NGINX for Azure 
+name: Sync the NGINX configuration from the Git repository to an NGINX for Azure deployment
 on:
   push:
     branches:
@@ -31,13 +31,15 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Sync NGINX configuration to NGINX on Azure instance'
+    - name: 'Sync the NGINX configuration from the Git repository to the NGINX for Azure deployment'
       uses: nginxinc/nginx-for-azure-deploy-action@v1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
         nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
-        nginx-config-relative-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
+        nginx-config-directory-path: config
+        nginx-root-config-file-name: nginx.conf
+        transformed-nginx-config-directory-path: /etc/nginx
 ```
 
 ### Sample workflow that authenticates with Azure using OIDC
@@ -45,7 +47,7 @@ jobs:
 ```yaml
 # File: .github/workflows/nginxForAzureDeploy.yml
 
-name: Sync configuration to NGINX for Azure 
+name: Sync the NGINX configuration from the Git repository to an NGINX for Azure deployment
 on:
   push:
     branches:
@@ -71,11 +73,13 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: 'Sync NGINX configuration to NGINX on Azure instance'
+    - name: 'Sync the NGINX configuration from the Git repository to the NGINX for Azure deployment'
       uses: nginxinc/nginx-for-azure-deploy-action@v1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
         nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
-        nginx-config-relative-file-path: ${{ secrets.NGINX_CONFIG_FILE }}
+        nginx-config-directory-path: config
+        nginx-root-config-file-name: nginx.conf
+        transformed-nginx-config-directory-path: /etc/nginx
 ```
