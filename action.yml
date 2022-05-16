@@ -1,22 +1,33 @@
 name: 'NGINX configuration sync'
-description: 'The action synchronizes NGINX configuration from a Git repository to an NGINX deployment on Azure.'
+description: 'The action synchronizes NGINX configuration from a Git repository to an NGINX for Azure deployment.'
 inputs:
   subscription-id:
-    description: 'The Azure subscription ID of the NGINX deployment'
+    description: 'The Azure subscription ID of the NGINX for Azure deployment.'
     required: true
   resource-group-name:
-    description: 'The resource group of the NGINX deployment'
+    description: 'The resource group of the NGINX for Azure deployment.'
     required: true
   nginx-deployment-name:
-    description: 'The name of the NGINX deployment'
+    description: 'The name of the NGINX for Azure deployment.'
     required: true
-  nginx-config-relative-file-path:
-    description: 'The relative file path of the NGINX configuration file in the Git repository'
+  nginx-config-directory-path:
+    description: 'The NGINX configuration directory path relative to the root of the Git repository, example: "config/".'
     required: true
-    default: './config/nginx.conf'
+  nginx-root-config-file:
+    description: >
+     'The root NGINX configuration file path relative to the NGINX configuration directory in the Git repository, example: "nginx.conf".'
+    required: false
+    default: 'nginx.conf'
+  transformed-nginx-config-directory-path:
+    description: >
+     'The transformed absolute path of the NGINX configuration directory in NGINX for Azure deployment, example: "/etc/nginx/". 
+     If the "include" directive in the NGINX configuration files uses absolute paths, the path transformation 
+     can be used to overwrite the file paths when the action synchronizes the files to the NGINX for Azure deployment.'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
-    - name: 'Deploy configuration to the NGINX deployment in Azure'
-      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-relative-file-path }}
+    - name: 'Synchronize NGINX configuration from the Git repository to an NGINX for Azure deployment'
+      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-directory-path }} ${{ inputs.nginx-root-config-file }} ${{ inputs.transformed-nginx-config-directory-path }}
       shell: bash
