@@ -6,7 +6,7 @@ subscription_id=$1
 resource_group_name=$2
 nginx_deployment_name=$3
 config_dir_path=$4
-root_config_file_name=$5
+root_config_file=$5
 transformed_config_dir_path=${6:-''}
 
 # Validation and preprocessing
@@ -14,7 +14,7 @@ transformed_config_dir_path=${6:-''}
 if [[ "$config_dir_path" = /* ]]
 then
     echo "The NGINX configuration directory path in the repository '$config_dir_path' must be a relative path."
-    exit 2
+    exit 1
 elif [[ ! "$config_dir_path" = */ ]]
 then
     echo "The NGINX configuration directory path '$config_dir_path' does not end with '/'. Appending a trailing '/'."
@@ -26,16 +26,24 @@ then
     echo "The NGINX configuration directory '$config_dir_path' was found."
 else 
     echo "The NGINX configuration directory '$config_dir_path' does not exist."
-    exit 2
+    exit 1
 fi
 
-root_config_file_path="$config_dir_path$root_config_file_name"
-if [[ -f "$root_config_file_path" ]]
+if [[ "$root_config_file" = /* ]]
 then
-    echo "The root NGINX configuration file '$root_config_file_path' was found."
+    echo "The NGINX configuration root file path '$root_config_file' must be a relative path to the NGINX configuration directory."
+    exit 1
+fi
+
+root_config_file=$(echo $root_config_file | sed 's:^\.\/*::')
+
+root_config_file_repo_path="$config_dir_path$root_config_file"
+if [[ -f "$root_config_file_repo_path" ]]
+then
+    echo "The root NGINX configuration file '$root_config_file_repo_path' was found."
 else 
-    echo "The root NGINX configuration file '$root_config_file_path' does not exist."
-    exit 2
+    echo "The root NGINX configuration file '$root_config_file_repo_path' does not exist."
+    exit 1
 fi
 
 if [[ -n "$transformed_config_dir_path" ]]
@@ -43,7 +51,7 @@ then
     if [[ ! "$transformed_config_dir_path" = /* ]]
     then
         echo "The specified transformed NGINX configuration directory path '$transformed_config_dir_path' must be an absolute path that starts with '/'."
-        exit 2
+        exit 1
     elif [[ ! "$transformed_config_dir_path" = */ ]]
     then
         echo "The specified transformed NGINX configuration directory path '$transformed_config_dir_path' does not end with '/'. Appending a trailing '/'."
@@ -51,7 +59,7 @@ then
     fi
 fi
 
-transformed_root_config_file_path="$transformed_config_dir_path$root_config_file_name"
+transformed_root_config_file_path="$transformed_config_dir_path$root_config_file"
 echo "The transformed root NGINX configuration file path is '$transformed_root_config_file_path'."
 
 # Create a NGINX configuration tarball.

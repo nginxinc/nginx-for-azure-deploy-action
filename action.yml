@@ -11,17 +11,16 @@ inputs:
     description: 'The name of the NGINX for Azure deployment.'
     required: true
   nginx-config-directory-path:
-    description: 'The NGINX configuration directory path relative to the root of the Git repository, example: "config".'
+    description: 'The NGINX configuration directory path relative to the root of the Git repository, example: "config/".'
     required: true
-  nginx-root-config-file-name:
+  nginx-root-config-file:
     description: >
-     'The root NGINX configuration file name, example: "nginx.conf". The root file must be in the NGINX configuration directory 
-     but not in its subdirectory.'
+     'The root NGINX configuration file path relative to the NGINX configuration directory in the Git repository, example: "nginx.conf".'
     required: false
     default: 'nginx.conf'
   transformed-nginx-config-directory-path:
     description: >
-     'The transformed absolute path of the NGINX configuration directory in NGINX for Azure deployment, example: "/etc/nginx". 
+     'The transformed absolute path of the NGINX configuration directory in NGINX for Azure deployment, example: "/etc/nginx/". 
      If the "include" directive in the NGINX configuration files uses absolute paths, the path transformation 
      can be used to overwrite the file paths when the action synchronizes the files to the NGINX for Azure deployment.'
     required: false
@@ -30,5 +29,5 @@ runs:
   using: "composite"
   steps:
     - name: 'Synchronize NGINX configuration from the Git repository to an NGINX for Azure deployment'
-      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-directory-path }} ${{ inputs.nginx-root-config-file-name }} ${{ inputs.transformed-nginx-config-directory-path }}
+      run: ${{github.action_path}}/src/deploy-config.sh ${{ inputs.subscription-id }} ${{ inputs.resource-group-name }} ${{ inputs.nginx-deployment-name }} ${{ inputs.nginx-config-directory-path }} ${{ inputs.nginx-root-config-file }} ${{ inputs.transformed-nginx-config-directory-path }}
       shell: bash
