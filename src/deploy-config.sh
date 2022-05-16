@@ -35,7 +35,8 @@ then
     exit 1
 fi
 
-root_config_file=$(echo $root_config_file | sed 's:^\.\/*::')
+# Remove the leading './' from the root configuration file path if any.
+root_config_file=${root_config_file/#'./'/}
 
 root_config_file_repo_path="$config_dir_path$root_config_file"
 if [[ -f "$root_config_file_repo_path" ]]
