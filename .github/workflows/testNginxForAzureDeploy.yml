@@ -32,14 +32,14 @@ jobs:
         shell: bash
         run: |
           echo "RANDOM=$((RANDOM%10))" >> $GITHUB_ENV
-          sed -i 's/000000/'"${{ env.RANDOM }}"'/g' tests/configs/single/nginx.conf
+          sed -i 's/000000/'"${{ env.RANDOM }}"'/g' test/configs/single/nginx.conf
       - name: 'Sync NGINX configuration to NGINX on Azure instance - single file'
         uses: nginxinc/nginx-for-azure-deploy-action@v0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
           nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-config-directory-path: tests/configs/single/
+          nginx-config-directory-path: test/configs/single/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
       - name: 'Validate config update - single file'
@@ -49,14 +49,14 @@ jobs:
       - name: 'Update config - multi file'
         shell: bash
         run: |
-          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' tests/configs/multi/conf.d/proxy.conf
+          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' test/configs/multi/conf.d/proxy.conf
       - name: 'Sync NGINX configuration to NGINX on Azure instance - multi file'
         uses: nginxinc/nginx-for-azure-deploy-action@v0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
           nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-config-directory-path: tests/configs/multi/
+          nginx-config-directory-path: test/configs/multi/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
       - name: 'Validate config update'
