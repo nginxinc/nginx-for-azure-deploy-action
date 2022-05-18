@@ -4,7 +4,6 @@ name: Test Github action to update NGINX for Azure configurations
 on:
   schedule:
     - cron:  '0 20 * * *'
-    - cron:  '*/5 * * * *'
 
 env:
   NGINX_DEPLOYMENT_NAME: githhubci-test-dep
