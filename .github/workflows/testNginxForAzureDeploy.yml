@@ -31,8 +31,8 @@ jobs:
       - name: 'Update config - single file'
         shell: bash
         run: |
-          echo "RANDOM=$((RANDOM%10))" >> $GITHUB_ENV
-          sed -i 's/000000/'"${{ env.RANDOM }}"'/g' test/configs/single/nginx.conf
+          sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' test/configs/single/nginx.conf
+          cat test/configs/single/nginx.conf
       - name: 'Sync NGINX configuration to NGINX on Azure instance - single file'
         uses: nginxinc/nginx-for-azure-deploy-action@v0
         with:
@@ -45,11 +45,12 @@ jobs:
       - name: 'Validate config update - single file'
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"${{ env.RANDOM }}"'")'
+          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_NUMBER"'")'
       - name: 'Update config - multi file'
         shell: bash
         run: |
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' test/configs/multi/conf.d/proxy.conf
+          cat test/configs/multi/conf.d/proxy.conf
       - name: 'Sync NGINX configuration to NGINX on Azure instance - multi file'
         uses: nginxinc/nginx-for-azure-deploy-action@v0
         with:
