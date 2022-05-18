@@ -32,7 +32,7 @@ jobs:
         shell: bash
         run: |
           echo "RANDOM=$((RANDOM%10))" >> $GITHUB_ENV
-          sed -i 's/000000/'"${ env.RANDOM }"'/g' tests/configs/single/nginx.conf
+          sed -i 's/000000/'"${{ env.RANDOM }}"'/g' tests/configs/single/nginx.conf
       - name: 'Sync NGINX configuration to NGINX on Azure instance - single file'
         uses: nginxinc/nginx-for-azure-deploy-action@v0
         with:
@@ -45,7 +45,7 @@ jobs:
       - name: 'Validate config update - single file'
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"${ env.RANDOM }"'")'
+          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"${{ env.RANDOM }}"'")'
       - name: 'Update config - multi file'
         shell: bash
         run: |
