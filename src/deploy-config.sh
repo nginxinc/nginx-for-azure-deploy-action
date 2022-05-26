@@ -85,7 +85,7 @@ uuid="$(cat /proc/sys/kernel/random/uuid)"
 template_file="template-$uuid.json"
 template_deployment_name="${nginx_deployment_name:0:20}-$uuid"
 
-wget -O "$template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/main/src/nginx-for-azure-configuration-template.json
+wget -O "$template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/487d1394d6115d4f42ece6200cbd20859595557d/src/nginx-for-azure-configuration-template.json
 echo "Downloaded the ARM template for synchronizing NGINX configuration."
 cat "$template_file"
 echo ""
