@@ -6,7 +6,7 @@ on:
     - cron:  '0 20 * * *'
 
 env:
-  NGINX_DEPLOYMENT_NAME: githhubci-test-dep
+  NGINX_DEPLOYMENT_NAME: github-action-test-dep
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
   TEST_RESOURCE_GROUP_NAME: testenv-0da38993-workload
