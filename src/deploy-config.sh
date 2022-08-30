@@ -2,12 +2,66 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-subscription_id=$1
-resource_group_name=$2
-nginx_deployment_name=$3
-config_dir_path=$4
-root_config_file=$5
-transformed_config_dir_path=${6:-''}
+transformed_config_dir_path=''
+for i in "$@"
+do
+case $i in
+    --subscription_id=*)
+    subscription_id="${i#*=}"
+    shift 
+    ;;
+    --resource_group_name=*)
+    resource_group_name="${i#*=}"
+    shift 
+    ;;
+    --nginx_deployment_name=*)
+    nginx_deployment_name="${i#*=}"
+    shift 
+    ;;
+    --config_dir_path=*)
+    config_dir_path="${i#*=}"
+    shift 
+    ;;
+    --root_config_file=*)
+    root_config_file="${i#*=}"
+    shift 
+    ;;
+    --transformed_config_dir_path=*)
+    transformed_config_dir_path="${i#*=}"
+    shift 
+    ;;
+    *)
+    echo "Not matched option '${i#*=}' passed in."
+    exit 1
+    ;;
+esac
+done
+
+if [[ ! -v subscription_id ]];
+then
+    echo "Please set 'subscription-id' ..."
+    exit 1 
+fi
+if [[ ! -v resource_group_name ]];
+then
+    echo "Please set 'resource-group-name' ..."
+    exit 1 
+fi
+if [[ ! -v nginx_deployment_name ]];
+then
+    echo "Please set 'nginx-deployment-name' ..."
+    exit 1 
+fi
+if [[ ! -v config_dir_path ]];
+then
+    echo "Please set 'nginx-config-directory-path' ..."
+    exit 1 
+fi
+if [[ ! -v root_config_file ]];
+then
+    echo "Please set 'nginx-root-config-file' ..."
+    exit 1 
+fi
 
 # Validation and preprocessing
 
