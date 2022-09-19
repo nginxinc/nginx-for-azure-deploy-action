@@ -29,13 +29,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: "Sync NGINX certificate to NGINX for Azure - single cert"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.2.0
-        with:
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: $TEST_RESOURCE_GROUP_NAME
-          nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-certificate-details: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_NUMBER/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_NUMBER/my-cert.key"  } ]'
 
       - name: "Update config - single file"
         shell: bash
@@ -62,15 +55,17 @@ jobs:
           cat test/configs/single/nginx.conf
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' test/configs/multi/conf.d/proxy.conf
           cat test/configs/multi/conf.d/proxy.conf
-      - name: "Sync NGINX configuration to NGINX for Azure - multi file"
+      - name: "Sync NGINX configuration and certificate to NGINX for Azure - multi file"
         uses: nginxinc/nginx-for-azure-deploy-action@v0.2.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
           nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
+          nginx-resource-location: "westcentralus"
           nginx-config-directory-path: test/configs/multi/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
+          nginx-certificate-details: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_NUMBER/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_NUMBER/my-cert.key"  } ]'
 
       - name: "Validate config update"
         shell: bash
