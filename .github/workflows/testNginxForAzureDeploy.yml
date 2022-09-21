@@ -2,8 +2,7 @@
 
 name: Test Github action to update NGINX for Azure configurations
 on:
-  schedule:
-    - cron: "0 20 * * *"
+  push:
 
 env:
   NGINX_DEPLOYMENT_NAME: github-action-test-dep
@@ -26,9 +25,7 @@ jobs:
       - name: "AZ CLI Login"
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
       - name: "Update config - single file"
         shell: bash
