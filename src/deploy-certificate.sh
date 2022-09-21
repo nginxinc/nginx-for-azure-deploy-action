@@ -54,7 +54,7 @@ then
 fi
 if [[ ! -v certificates ]];
 then
-    echo "Please set 'nginx-certificate-details' ..."
+    echo "Please set 'nginx-certificates' ..."
     exit 1 
 fi
 

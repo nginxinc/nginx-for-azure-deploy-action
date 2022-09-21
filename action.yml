@@ -28,15 +28,15 @@ inputs:
       can be used to overwrite the file paths when the action synchronizes the files to the NGINX for Azure deployment.'
     required: false
     default: ""
-  nginx-certificate-details:
+  nginx-certificates:
     description: 'An array of JSON objects each with keys nginx_cert_name, keyvault_secret, certificate_virtual_path and key_virtual_path. Example: [{"certificateName": "server1", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/ssl/certs/server1.crt", "keyVirtualPath": "/etc/ssl/certs/server1.key"  }, {"name": "server2", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/ssl/certs/server2.crt", "keyVirtualPath": "/etc/ssl/certs/server2.key"  }] '
     required: false
 runs:
   using: "composite"
   steps:
     - name: "Synchronize NGINX certificate(s) from the Git repository to an NGINX for Azure deployment"
-      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --nginx_resource_location=${{ inputs.nginx-deployment-location }}  --certificates=${{ toJSON(inputs.nginx-certificate-details) }}
-      if: ${{ inputs.nginx-deployment-location != '' && inputs.nginx-certificate-details != '' }}
+      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --nginx_resource_location=${{ inputs.nginx-deployment-location }}  --certificates=${{ toJSON(inputs.nginx-certificates) }}
+      if: ${{ inputs.nginx-deployment-location != '' && inputs.nginx-certificates != '' }}
       shell: bash
     - name: "Synchronize NGINX configuration from the Git repository to an NGINX for Azure deployment"
       run: ${{github.action_path}}/src/deploy-config.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --config_dir_path=${{ inputs.nginx-config-directory-path }} --root_config_file=${{ inputs.nginx-root-config-file }} --transformed_config_dir_path=${{ inputs.transformed-nginx-config-directory-path }}
