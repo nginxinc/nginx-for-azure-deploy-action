@@ -36,7 +36,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' test/configs/single/nginx.conf
           cat test/configs/single/nginx.conf
       - name: "Sync NGINX configuration to NGINX for Azure - single file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.2.1
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
@@ -56,7 +56,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' test/configs/multi/conf.d/proxy.conf
           cat test/configs/multi/conf.d/proxy.conf
       - name: "Sync NGINX configuration and certificate to NGINX for Azure - multi file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.2.1
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
@@ -65,7 +65,7 @@ jobs:
           nginx-config-directory-path: test/configs/multi/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
-          nginx-certificate-details: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
+          nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
 
       - name: "Validate config update"
         shell: bash
