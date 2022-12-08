@@ -61,7 +61,7 @@ fi
 arm_template_file="nginx-for-azure-certificate-template.json"
 
 #get the ARM template file
-wget -O "$arm_template_file" https://nginxgithubactions.blob.core.windows.net/armtemplates/nginx-for-azure-certificate-template.json
+wget -O "$arm_template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/a69d33feaa1a8a012ec44c138ca78c6ec4db9f29/src/nginx-for-azure-certificate-template.json
 echo "Downloaded the ARM template for synchronizing NGINX certificate."
 
 cat "$arm_template_file"
