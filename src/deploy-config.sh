@@ -133,7 +133,7 @@ echo "The base64 encoded NGINX configuration tarball"
 echo "$encoded_config_tarball"
 echo ""
 
-# Synchronize the NGINX configuration tarball to the NGINX for Azure deployment.
+# Synchronize the NGINX configuration tarball to the NGINXaaS for Azure deployment.
 
 uuid="$(cat /proc/sys/kernel/random/uuid)"
 template_file="template-$uuid.json"
@@ -147,7 +147,7 @@ echo ""
 echo "Synchronizing NGINX configuration"
 echo "Subscription ID: $subscription_id"
 echo "Resource group name: $resource_group_name"
-echo "NGINX for Azure deployment name: $nginx_deployment_name"
+echo "NGINXaaS for Azure deployment name: $nginx_deployment_name"
 echo "ARM template deployment name: $template_deployment_name"
 echo ""
 

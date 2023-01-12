@@ -109,13 +109,13 @@ do
     echo "Synchronizing NGINX certificate"
     echo "Subscription ID: $subscription_id"
     echo "Resource group name: $resource_group_name"
-    echo "NGINX for Azure deployment name: $nginx_deployment_name"
-    echo "NGINX for Azure Location: $nginx_resource_location"
+    echo "NGINXaaS for Azure deployment name: $nginx_deployment_name"
+    echo "NGINXaaS for Azure Location: $nginx_resource_location"
     echo "ARM template deployment name: $template_deployment_name"
     echo ""
-    echo "NGINX for Azure cert name: $nginx_cert_name"
-    echo "NGINX for Azure cert file location: $nginx_cert_file"
-    echo "NGINX for Azure key file location: $nginx_key_file"
+    echo "NGINXaaS for Azure cert name: $nginx_cert_name"
+    echo "NGINXaaS for Azure cert file location: $nginx_cert_file"
+    echo "NGINXaaS for Azure key file location: $nginx_key_file"
     echo ""
 
     if [ $do_nginx_arm_deployment -eq 1 ]
