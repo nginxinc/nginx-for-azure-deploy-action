@@ -1,6 +1,6 @@
 # File: .github/workflows/testNginxForAzureDeploy.yml
 
-name: Test Github action to update NGINX for Azure configurations
+name: Test Github action to update NGINX as a Service (NGINXaaS) for Azure configurations
 on:
   schedule:
     - cron: "0 20 * * *"
@@ -35,7 +35,7 @@ jobs:
         run: |
           sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' test/configs/single/nginx.conf
           cat test/configs/single/nginx.conf
-      - name: "Sync NGINX configuration to NGINX for Azure - single file"
+      - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
         uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -55,7 +55,7 @@ jobs:
           cat test/configs/multi/nginx.conf
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' test/configs/multi/conf.d/proxy.conf
           cat test/configs/multi/conf.d/proxy.conf
-      - name: "Sync NGINX configuration and certificate to NGINX for Azure - multi file"
+      - name: "Sync NGINX configuration and certificate to NGINXaaS for Azure - multi file"
         uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

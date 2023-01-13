@@ -5,7 +5,7 @@
         "nginxDeploymentName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the NGINX for Azure deployment to synchronize the configuration."
+                "description": "The name of the NGINXaaS for Azure deployment to synchronize the configuration."
             }
         },
         "rootFile": {
