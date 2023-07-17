@@ -1,0 +1,16 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:  
+- task: nginx-config-push@0
+  inputs:
+    serviceConnectionName: '(sercive-connection-name)'
+    resourceGroupName: '(resource-group-name)'
+    subscriptionId: '(subscription-id)'
+    deploymentName: '(deployment-name)'
+    sourceConfigFolderPath: '(config-folder-file-path)'
+    targetConfigFolderPath: '/etc/nginx/'
+
