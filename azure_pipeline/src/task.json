@@ -1,0 +1,73 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "4b016be0-afe8-4f76-ace3-d7f0355d9605",
+    "name": "nginx-for-azure-config-sync",
+    "friendlyName": "nginxconfigpush",
+    "description": "this task is designed for pushing nginx configs from azrue devops repository to azure nginx deployments",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "zaotest",
+    "version": {
+        "Major": 2,
+        "Minor": 0,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Echo $(samplestring)",
+    "inputs": [
+        {
+            "name": "azureSubscriptionEndpoint",
+            "aliases": [
+                "serviceConnectionName"
+            ],
+            "type": "connectedService:AzureRM",
+            "label": "Azure Service Connection Name",
+            "helpMarkDown": "serviceConnectionName",
+            "required": true
+        },
+        {
+            "name": "resourceGroupName",
+            "type": "string",
+            "label": "resourceGroupName",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "resourceGroupName"
+        },
+        {
+            "name": "subscriptionId",
+            "type": "string",
+            "label": "subscriptionId",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "subscriptionId"
+        },
+        {
+            "name": "deploymentName",
+            "type": "string",
+            "label": "deploymentName",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "deploymentName"
+        },
+        {
+            "name": "sourceConfigFolderPath",
+            "type": "string",
+            "label": "sourceConfigFolderPath",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "a content type to append to all keys in the configuration file"
+        },
+        {
+            "name": "targetConfigFolderPath",
+            "type": "string",
+            "label": "targetConfigFolderPath Type",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "targetConfigFolderPath"
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "dist/index.js"
+        }
+    }
+}
