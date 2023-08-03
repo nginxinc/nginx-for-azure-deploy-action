@@ -1,3 +1,4 @@
-azure_pipeline/src/dist/
-azure_pipeline/src/node_modules/
-azure_pipeline/src/package-lock.json
+node_modules
+dist
+package-lock.json
+coverage

@@ -9,7 +9,7 @@ import {
 } from './utils/constants';
 import {
     FileHandler,
-} from './utils/fileHandler';
+} from './utils/file-handler';
 import {
     validatedEnvVar,
     validatedAuthParams,
