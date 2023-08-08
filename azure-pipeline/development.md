@@ -7,7 +7,7 @@ For the developing and publishing of the pipeline task, there are two ways to bu
 
 ### Step 1. Get vss-extension.json ready for packaging
 
-Vss-extension.json defines all information about your extension that will be displayed in the marketplace. 
+vss-extension.json defines all information about your extension that will be displayed in the marketplace. 
 
 Please not that the name and id of this file is not finalized.
 
