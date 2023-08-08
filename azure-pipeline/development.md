@@ -99,7 +99,7 @@ However, if this is the first time you are publishing the pipeline extension, pl
 
 You can also set up an Azure pipeline to automate the updating and releasing process with the following template:
 
-```
+```yaml
 # build.yml
 # This is an example pipeline if we need a pipeline to update the task onto the market place
 # If we use manual update, this will not be needed.
