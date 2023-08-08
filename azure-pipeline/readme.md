@@ -23,7 +23,7 @@ NGINX for Azure currently supports both **GitHub Action** pipeline and **Azure D
 
 Basically, all that the pipeline task needed is a .yml task written as follows,
 
-```
+```yaml
 # example.yml
 
 trigger:
