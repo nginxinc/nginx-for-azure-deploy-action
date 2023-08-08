@@ -4,7 +4,7 @@ import { INPUT } from './constants';
 export const validatedEnvVar = (inputName: string) => {
     const value = tl.getInput(inputName, true);
     if (!value) {
-        throw new Error(`Varialbe ${inputName} not found!`);
+        throw new Error(`Variable ${inputName} not found!`);
     }
     return value;
 }
