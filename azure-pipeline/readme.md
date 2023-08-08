@@ -89,7 +89,5 @@ Go back to the Azure DevOps project settings and click into the “service conne
 
 Go to marketplace and search our pipeline task. Once you have the extension installed on your Azure DevOps organization, you will be able to create a pipeline task with the stated .yml file template and use our customized task conveniently. You can also use text editor of the pipeline to utilize a simple UI of this pipeline task.
 
-<br />
-<br />
 
 That's it! Once you have all the above settings done and a pipeline created on the Azure DevOps, your NGINX configuration will be automatically updated to your designated NGINX for Azure deployment resource once you have any changes to the files in the repository and the pipeline is triggered. 
