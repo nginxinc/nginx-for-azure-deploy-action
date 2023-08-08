@@ -35,12 +35,13 @@ pool:
 steps:  
 - task: nginx-config-push@0
   inputs:
-    serviceConnectionName: '(sercive-connection-name)'
-    resourceGroupName: '(resource-group-name)'
-    subscriptionId: '(subscription-id)'
-    deploymentName: '(deployment-name)'
-    sourceConfigFolderPath: '(config-folder-file-path)'
-    targetConfigFolderPath: '/etc/nginx/'
+    serviceConnectionName: '(Enter the name of the service connection to Azure)'
+    resourceGroupName: '(Enter the name of the Azure resource group of the deployment)'
+    subscriptionId: '(Enter the Azure subscription ID of the deployment)'
+    deploymentName: '(Enter the name for this deployment)'
+    configDirectoryInRepo: '(Enter the relative path to the Nginx configuration directory in the repository)'
+    configDirectoryInDeployment: '(Enter the target path for the Nginx configuration directory in the deployment environment, e.g., /etc/nginx/)'
+    rootConfigFileName: '(Enter the name of the root configuration file and make sure it is in the config directory. e.g., nginx.conf)'
 
 ```
  
@@ -49,7 +50,7 @@ What is needed right now is to get values of the needed variables with following
 
 ##### 1. Get your NGINX configuration file ready in the repository.
 
-Upload your NGINX configuration files onto any folder of your Azure DevOps repository. Then update the ‘sourceConfigFolderPath’ to the path of the configuration folder in your repository. Note that the name of the main file of the NGINX configuration folder should be “nginx.conf”, and the ‘targetConfigFolderPath’ would usually be /etc/nginx/.
+Upload your NGINX configuration files onto any folder of your Azure DevOps repository. Then update the ‘configDirectoryInRepo’ to the path of the configuration folder in your repository. 
 
 ![Image](images/readme-guidline-01.png)
 

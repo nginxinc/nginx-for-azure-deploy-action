@@ -7,10 +7,10 @@ export const OUTPUT_PATH: string = './uploading-file.tar.gz';
 
 export const INPUT = {
     connection: 'AZURESUBSCRIPTIONENDPOINT',
-    source: 'SOURCECONFIGFOLDERPATH',
-    target: 'TARGETCONFIGFOLDERPATH',
-    subscription: 'SUBSCRIPTIONID',
     resource: 'RESOURCEGROUPNAME',
+    subscription: 'SUBSCRIPTIONID',
     deployment: 'DEPLOYMENTNAME',
-
+    source: 'CONFIGDIRECTORYINREPO',
+    target: 'CONFIGDIRECTORYINDEPLOYMENT',
+    rootFile: 'ROOTCONFIGFILENAME',
 }

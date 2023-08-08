@@ -9,7 +9,19 @@ const headers = {
 
 const baseURL = 'https://management.azure.com';
 
+/**
+ * Class SimplifiedHttp provides a simplified interface for HTTP requests.
+ * It encapsulates common configurations and error handling for making HTTP PUT requests.
+ */
 class SimplifiedHttp {
+  /**
+   * Makes an HTTP PUT request to the specified endpoint with the given data and configuration.
+   * @param endpoint {string} The URL of the endpoint to send the request to.
+   * @param data {T} Optional data to be sent in the request body.
+   * @param config {AxiosRequestConfig} Optional configuration object for the request.
+   * @returns {Promise<R>} A promise that resolves to the response of the request.
+   * @throws {any} If an error occurs during the request.
+   */
   put<T = any, R = AxiosResponse<T>>(endpoint: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
     const finalConfig = {
       ...config,

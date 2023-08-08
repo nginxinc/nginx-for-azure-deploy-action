@@ -13,31 +13,36 @@ import {
 import {
     validatedEnvVar,
     validatedAuthParams,
-} from './utils/common';
+} from './utils/validation';
 import { 
     ClientSecretCredential,
     AuthenticationError,
 } from '@azure/identity';
 import { info } from 'console';
 
-
+/**
+ * Class ConfigUpdater is responsible for updating the Nginx configuration.
+ * It provides methods to authenticate, compress, and upload user-specific configurations
+ * using Azure identity and other utilities.
+*/
 class ConfigUpdater {
 
     private f = new FileHandler;
 
-    // getAuthorizationTokenFromKey():
-    // a function takes user's input given in the .yml file
-    // and request an bearer token for authentication of later authorization
-    // using @azure/identity
-    private getAuthorizationTokenFromKey = async () => {
+    /**
+     * Retrieves the authorization token for later authentication by using Azure identity.
+     * @returns {Promise<any>} The authorization token.
+     * @throws {Error} If the authorization parameters validation fails.
+     * @throws {AuthenticationError} If the access token fetch fails.
+    */
+    private getAuthorizationTokenFromKey = async (
+        tenantID: string,
+        clientID: string,
+        servicePrincipalKey: string
+    ) => {
         try {
-            const params = {
-                tenantID:  validatedAuthParams('tenantid'),
-                clientID:  validatedAuthParams('servicePrincipalId'),
-                servicePrincipalKey: validatedAuthParams('servicePrincipalKey'),
-            }
             const clientSecretCredential: ClientSecretCredential = new ClientSecretCredential(
-                params.tenantID, params.clientID, params.servicePrincipalKey
+                tenantID, clientID, servicePrincipalKey
             );
             const accessToken = await clientSecretCredential.getToken(SCOPE);
             if (!accessToken) {
@@ -51,9 +56,10 @@ class ConfigUpdater {
         }
     }
 
-    // getConvertedFileObject():
-    // compress config file folder
-    // and make it ready for sending it to backend
+    /**
+     * Compresses the configuration file folder and prepares it for sending to the backend.
+     * @returns {Promise<Object>} An object containing properties related to the compressed file.
+     */
     private getConvertedFileObject = async () => {
         const file = await this.f.compressFile(
             validatedEnvVar(INPUT.source),
@@ -62,7 +68,7 @@ class ConfigUpdater {
         );
         return {
             properties: {
-                rootFile: `${validatedEnvVar(INPUT.target)}nginx.conf`,
+                rootFile: `${validatedEnvVar(INPUT.target)}/${validatedEnvVar(INPUT.rootFile)}`.replace(/\/\/+/g, '/'),
                 package: {
                     data: this.f.convertFileToBase64String(file),
                 }
@@ -70,18 +76,27 @@ class ConfigUpdater {
         };
     }
 
-    // getRequestConfig():
-    // make up the bearer token from user's input
+    /**
+     * Constructs the request configuration, including the bearer token from the user's input.
+     * @returns {Promise<AxiosRequestConfig>} The request configuration.
+     */
     private getRequestConfig = async () => {
-        const token = await this.getAuthorizationTokenFromKey();
+        const token = await this.getAuthorizationTokenFromKey(
+            validatedAuthParams('tenantid'),
+            validatedAuthParams('servicePrincipalId'),
+            validatedAuthParams('servicePrincipalKey'),
+        );
         const config: AxiosRequestConfig = { headers: {
             Authorization: `Bearer ${token.token}`,
         }}
         return config;
     }
 
-    // getRequestResource():
-    // make up all needed parameters for the uploading api request
+    /**
+     * Constructs the required parameters for the uploading API request.
+     * @returns {Object} An object containing the required parameters for the request,
+     * including subscription ID, resource group name, deployment name, and API version.
+     */
     private getRequestResource = () => {
         return {
             subscriptionId: validatedEnvVar(INPUT.subscription),
@@ -91,8 +106,10 @@ class ConfigUpdater {
         }
     }
 
-    // updateNginxConfig():
-    // main function to compress file, get authentication info, and call the api
+    /**
+     * Main function to compress the file, retrieve authentication info, and call the API to update the Nginx configuration.
+     * @throws {Error} If the Nginx configuration uploading fails.
+    */
     updateNginxConfig = async () => {
         console.log('updateNginxConfig...')
         try {
