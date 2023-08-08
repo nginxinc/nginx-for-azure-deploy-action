@@ -4,7 +4,7 @@
 
 This is a customed Azure pipeline task that automates the process of synchronizing NGINX configuration files. With this pipeline, the configuration files that are stored and managed in Azure DevOps or GitHub repositories can now be automatically packaged and uploaded to NGINX for Azure deployments.
 
-When creating and updatding the configuration of a NGINX for Azure deployment, an automated pipeline task would be very helpful. There are three main advantages of a pipeline task compared to a manual updation:
+When creating and updating the configuration of a NGINX for Azure deployment, an automated pipeline task would be very helpful. There are three main advantages of a pipeline task compared to a manual updation:
 
 ##### 1. Automation.
 
