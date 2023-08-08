@@ -13,7 +13,7 @@ export const validatedAuthParams = (inputName: string) => {
     const serviceConnectionName = validatedEnvVar(INPUT.connection);
     const value = tl.getEndpointAuthorizationParameter(serviceConnectionName, inputName, false)
     if (!value) {
-        throw new Error(`Input varialbe ${inputName} not found!`);
+        throw new Error(`Input variable ${inputName} not found!`);
     }
     return value;
 }
