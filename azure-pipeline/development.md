@@ -11,7 +11,7 @@ vss-extension.json defines all information about your extension that will be dis
 
 Please not that the name and id of this file is not finalized.
 
-```
+```json
 
 // vss-extension.json
 
