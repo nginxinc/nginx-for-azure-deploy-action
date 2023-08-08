@@ -101,7 +101,7 @@ class ConfigUpdater {
                 await this.getConvertedFileObject(),
                 await this.getRequestConfig(),
             );
-            console.log('Nginx config successfully uploaded!\n');
+            console.log('Nginx config successfully uploaded!');
         } catch (error) {
             taskLib.setResult(taskLib.TaskResult.Failed, error as any);
             throw new Error("Nginx config uploading failed!"); 
