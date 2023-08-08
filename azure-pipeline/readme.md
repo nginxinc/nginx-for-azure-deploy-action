@@ -17,7 +17,7 @@ NGINX configuration files could be stored in GitHub or Azure DevOps repositories
 ##### 3. Security.
 Pipelines are running in secured and reliable agents, where data is transmitted within Azure services, hence reduced unnecessary data distribution and delivery.
 
-NGINX for Azure currently supports both <strong>GitHub Action </strong>pipeline and  <strong>Azure DevOps</strong> pipeline task. While there are some authentication and repository supporting difference, the purpose and functionality of the two pipelines have no essential distinction. For details on GitHub Action pipeline, please check out NGINX for Azure Deployment Action for more details. For Azure DevOps pipeline task, please follow the instructions below.
+NGINX for Azure currently supports both **GitHub Action** pipeline and **Azure DevOps** pipeline task. While there are some authentication and repository supporting difference, the purpose and functionality of the two pipelines have no essential distinction. For details on GitHub Action pipeline, please check out NGINX for Azure Deployment Action for more details. For Azure DevOps pipeline task, please follow the instructions below.
 
 ### Pipeline Task Set-up Guideline
 
