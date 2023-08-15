@@ -1,0 +1,16 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:  
+- task: nginx-config-push@0
+  inputs:
+    serviceConnectionName: '(Enter the name of the service connection to Azure)'
+    resourceGroupName: '(Enter the name of the Azure resource group of the deployment)'
+    subscriptionId: '(Enter the Azure subscription ID of the deployment)'
+    deploymentName: '(Enter the name for this deployment)'
+    configDirectoryInRepo: '(Enter the relative path to the Nginx configuration directory in the repository)'
+    configDirectoryInDeployment: '(Enter the target path for the Nginx configuration directory in the deployment environment, e.g., /etc/nginx)'
+    rootConfigFileName: '(Enter the name of the root configuration file and make sure it is in the config directory. e.g., nginx.conf)'

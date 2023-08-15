@@ -1,0 +1,81 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "4b016be0-afe8-4f76-ace3-d7f0355d9605",
+    "name": "nginx-for-azure-config-sync",
+    "friendlyName": "nginxconfigpush",
+    "description": "This task is designed to synchronize Nginx configurations from an Azure DevOps repository or GitHub repository to NGINXaaS for Azure deployments.",
+    "helpMarkDown": "Use this task to push Nginx configuration files from your repository to your NGINXaaS for Azure deployments",
+    "category": "Utility",
+    "author": "zaotest",
+    "version": {
+        "Major": 2,
+        "Minor": 0,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Echo $(samplestring)",
+    "inputs": [
+        {
+            "name": "azureSubscriptionEndpoint",
+            "aliases": [
+                "serviceConnectionName"
+            ],
+            "type": "connectedService:AzureRM",
+            "label": "Azure Service Connection Name",
+            "helpMarkDown": "Specify the Azure Service Connection to use for authentication.",
+            "required": true
+        },
+        {
+            "name": "resourceGroupName",
+            "type": "string",
+            "label": "Azure Resource Group Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Enter the name of the Azure Resource Group where the Nginx deployment resides."
+        },
+        {
+            "name": "subscriptionId",
+            "type": "string",
+            "label": "Azure Subscription ID",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Enter the ID of the Azure subscription for the deployment."
+        },
+        {
+            "name": "deploymentName",
+            "type": "string",
+            "label": "Deployment Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Enter a name for the deployment that will receive the Nginx configuration."
+        },
+        {
+            "name": "configDirectoryInRepo",
+            "type": "string",
+            "label": "Configuration Directory in Repository",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Enter the relative path to the Nginx configuration directory in the repository."
+        },
+        {
+            "name": "configDirectoryInDeployment",
+            "type": "string",
+            "label": "Configuration Directory in Deployment",
+            "defaultValue": "/etc/nginx",
+            "required": true,
+            "helpMarkDown": "Enter the target path for the Nginx configuration directory in the deployment environment."
+        },
+        {
+            "name": "rootConfigFileName",
+            "type": "string",
+            "label": "Root Configuration File Name",
+            "defaultValue": "nginx.conf",
+            "required": true,
+            "helpMarkDown": "Enter the name of the root configuration file, such as 'nginx.conf', within the configuration directory."
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "dist/index.js"
+        }
+    }
+}
