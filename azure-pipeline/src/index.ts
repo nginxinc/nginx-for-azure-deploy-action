@@ -18,7 +18,6 @@ import {
     ClientSecretCredential,
     AuthenticationError,
 } from '@azure/identity';
-import { info } from 'console';
 
 /**
  * Class ConfigUpdater is responsible for updating the Nginx configuration.
@@ -113,7 +112,7 @@ class ConfigUpdater {
     updateNginxConfig = async () => {
         console.log('updateNginxConfig... \n\tSubscription: ', validatedEnvVar(INPUT.subscription), '\n\tResource Group: ', validatedEnvVar(INPUT.resource), '\n\tDeployment: ', validatedEnvVar(INPUT.deployment), '\n\tSource: ', validatedEnvVar(INPUT.source), '\n\tTarget: ', validatedEnvVar(INPUT.target), '\n\tRoot File: ', validatedEnvVar(INPUT.rootFile));
         try {
-            const res = await updateUserConfig(
+            await updateUserConfig(
                 this.getRequestResource(),
                 await this.getConvertedFileObject(),
                 await this.getRequestConfig(),
