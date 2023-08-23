@@ -111,14 +111,14 @@ class ConfigUpdater {
      * @throws {Error} If the Nginx configuration uploading fails.
     */
     updateNginxConfig = async () => {
-        console.log('updateNginxConfig...')
+        console.log('updateNginxConfig... \n\tSubscription: ', validatedEnvVar(INPUT.subscription), '\n\tResource Group: ', validatedEnvVar(INPUT.resource), '\n\tDeployment: ', validatedEnvVar(INPUT.deployment), '\n\tSource: ', validatedEnvVar(INPUT.source), '\n\tTarget: ', validatedEnvVar(INPUT.target), '\n\tRoot File: ', validatedEnvVar(INPUT.rootFile));
         try {
             const res = await updateUserConfig(
                 this.getRequestResource(),
                 await this.getConvertedFileObject(),
                 await this.getRequestConfig(),
             );
-            console.log('Nginx config successfully uploaded!');
+            console.log('Nginx config uploaded successfully!');
         } catch (error) {
             taskLib.setResult(taskLib.TaskResult.Failed, error as any);
             throw new Error("Nginx config uploading failed!"); 
