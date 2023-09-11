@@ -1,15 +1,15 @@
 {
     "manifestVersion": 1,
-    "id": "nginx-config-sync-for-azure",
-    "name": "nginx-config-sync-for-azure",
-    "version": "2.0.0",                                                    
-    "publisher": "ZaoWang",
+    "id": "nginxaas-for-azure-config-sync",
+    "name": "NGINX Configuration Sync for Azure",
+    "version": "1.0.0",                                                    
+    "publisher": "F5 Networks, Inc.",
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
         }
     ],    
-    "description": "Zao's tool for uploading nginx config",
+    "description": "This extension provides a streamlined solution for synchronizing NGINX configuration files with Azure deployments. Designed to support Azure DevOps pipelines, it automates the process of packaging and uploading NGINX configurations to Azure, enhancing efficiency, version control, and security. Ideal for continuous integration and deployment workflows, it simplifies the management of NGINXaaS configurations within the Azure ecosystem.",
     "categories": [
         "Azure Pipelines"
     ],
@@ -41,7 +41,7 @@
     "galleryFlags": [
         "Public"
     ],
-    "public": false,
+    "public": true,
     "tags":[
         "Build task",
         "Deploy task"

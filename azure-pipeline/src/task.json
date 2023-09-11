@@ -1,14 +1,14 @@
 {
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
     "id": "4b016be0-afe8-4f76-ace3-d7f0355d9605",
-    "name": "nginx-for-azure-config-sync",
-    "friendlyName": "nginxconfigpush",
-    "description": "This task is designed to synchronize Nginx configurations from an Azure DevOps repository or GitHub repository to NGINXaaS for Azure deployments.",
-    "helpMarkDown": "Use this task to push Nginx configuration files from your repository to your NGINXaaS for Azure deployments",
-    "category": "Utility",
-    "author": "zaotest",
+    "name": "nginx-config-sync-for-azure",
+    "friendlyName": "NGINX Configuration Sync for Azure",
+    "description": "This task automates the synchronization of NGINX configuration files from an Azure DevOps repository or GitHub repository to NGINXaaS for Azure deployments.",
+    "helpMarkDown": "Use this task to seamlessly push NGINX configuration files from your repository to your NGINXaaS for Azure deployments, ensuring consistency and efficiency in your deployment management.",
+    "category": "Azure Pipelines",
+    "author": "F5 Networks, Inc.",
     "version": {
-        "Major": 2,
+        "Major": 1,
         "Minor": 0,
         "Patch": 0
     },
