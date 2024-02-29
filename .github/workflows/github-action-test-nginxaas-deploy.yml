@@ -1,7 +1,12 @@
+---
 # File: .github/workflows/testNginxForAzureDeploy.yml
 
 name: Test Github action to update NGINX as a Service (NGINXaaS) for Azure configurations
 on:
+  push:
+    branches:
+      - '*'
+  pull_request:
   schedule:
     - cron: "0 20 * * *"
 
@@ -84,8 +89,8 @@ jobs:
       with:
         inlineScript: |
           export NGINX_DEPLOYMENT_IP=$(cat nginx.json | jq '.properties.ipAddress')
-          wget -O - -o /dev/null http://${{ NGINX_DEPLOYMENT_IP }}/github-action | grep '$GITHUB_RUN_ID'
+          wget -O - -o /dev/null http://$NGINX_DEPLOYMENT_IP:8443/github-action | grep '$GITHUB_RUN_ID'
           echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
           az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
           echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-          wget -O - -o /dev/null https://${{ NGINX_DEPLOYMENT_IP }}:8443/github-action --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | grep '$GITHUB_RUN_ID'
+          wget -O - -o /dev/null https://$NGINX_DEPLOYMENT_IP:8443/github-action --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | grep '$GITHUB_RUN_ID'
