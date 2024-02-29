@@ -1,15 +1,21 @@
+---
 # File: .github/workflows/testNginxForAzureDeploy.yml
 
 name: Test Github action to update NGINX as a Service (NGINXaaS) for Azure configurations
 on:
+  push:
+    branches:
+      - '*'
+  pull_request:
   schedule:
     - cron: "0 20 * * *"
 
 env:
-  NGINX_DEPLOYMENT_NAME: github-action-test-dep
-  NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
-  NGINX_ROOT_CONFIG_FILE: nginx.conf
-  TEST_RESOURCE_GROUP_NAME: testenv-0da38993-workload
+  NGINX_CONFIG_DIRECTORY: github-action/test/configs
+  NGINX_DEPLOYMENT_NAME: n4a-long-westcent-nginxaas
+  NGINX_TRANSFORMED_CONFIG_DIR_PATH: /
+  NGINX_ROOT_CONFIG_FILE: /etc/nginx/nginx.conf
+  TEST_RESOURCE_GROUP_NAME: n4a-long-westcent-workload
   NGINX_CERT_NAME: github-action-test-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
@@ -18,64 +24,73 @@ permissions:
   contents: read
 
 jobs:
+  Fetch-NGINX-State:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: "AZ CLI Login"
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    
+    - name: "Fetch deployment state"
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.40.0
+        inlineScript: |
+          az extension add --source https://azcliprod.blob.core.windows.net/cli-extensions/nginx-0.1.1-py2.py3-none-any.whl -y
+          az nginx deployment show -g $TEST_RESOURCE_GROUP_NAME -n $NGINX_DEPLOYMENT_NAME --output json > nginx.json
+          az nginx deployment configuration show -g $TEST_RESOURCE_GROUP_NAME --deployment-name $NGINX_DEPLOYMENT_NAME -n default --output json > nginx.config.json
+        name: nginx-state
+        path: |
+          nginx.json
+          nginx.config.json
+
   Update-NGINX:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v2
-      - name: "AZ CLI Login"
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: "Checkout repository"
+      uses: actions/checkout@v2
+    
+    - name: "AZ CLI Login"
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: "Update config - single file"
-        shell: bash
-        run: |
-          sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' github-action/test/configs/single/nginx.conf
-          cat github-action/test/configs/single/nginx.conf
-      - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
-        with:
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: $TEST_RESOURCE_GROUP_NAME
-          nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-config-directory-path: github-action/test/configs/single/
-          nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
-          transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
-      - name: "Validate config update - single file"
-        shell: bash
-        run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_NUMBER"'")'
-      - name: "Update config - multi file"
-        shell: bash
-        run: |
-          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/multi/nginx.conf
-          cat github-action/test/configs/multi/nginx.conf
-          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/multi/conf.d/proxy.conf
-          cat github-action/test/configs/multi/conf.d/proxy.conf
-      - name: "Sync NGINX configuration and certificate to NGINXaaS for Azure - multi file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
-        with:
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: $TEST_RESOURCE_GROUP_NAME
-          nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-deployment-location: "westcentralus"
-          nginx-config-directory-path: github-action/test/configs/multi/
-          nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
-          transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
-          nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
+    - name: Download math result for job 1
+      uses: actions/download-artifact@v4
+      with:
+        name: nginx-state
 
-      - name: "Validate config update"
-        shell: bash
-        run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
-      - name: "Validate certificate update"
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
-            az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
-            echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-            wget -O - -o /dev/null https://${{ secrets.NGINX_DEPLOYMENT_IP }} --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
+    - name: "Prep Config Files"
+      shell: bash
+      run: |
+        ./github-action/test/scripts/config_to_files.sh -f $PWD/nginx.config.json -o $NGINX_CONFIG_DIRECTORY
+        sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' $NGINX_CONFIG_DIRECTORY/github_action.conf
+        mv $NGINX_CONFIG_DIRECTORY/github_action.conf $NGINX_CONFIG_DIRECTORY/etc/nginx/conf.d/servers/github_action.conf
+        cat $NGINX_CONFIG_DIRECTORY/etc/nginx/conf.d/servers/github_action.conf
+    - name: "Sync NGINX configuration and certificate to NGINXaaS for Azure"
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+      with:
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resource-group-name: $TEST_RESOURCE_GROUP_NAME
+        nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
+        nginx-deployment-location: "westcentralus"
+        nginx-config-directory-path: $NGINX_CONFIG_DIRECTORY
+        nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
+        transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
+        nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
+        
+    - name: "Validate certificate and config update"
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          export NGINX_DEPLOYMENT_IP=$(cat nginx.json | jq '.properties.ipAddress')
+          wget -O - -o /dev/null http://$NGINX_DEPLOYMENT_IP:8443/github-action | grep '$GITHUB_RUN_ID'
+          echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
+          az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
+          echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
+          wget -O - -o /dev/null https://$NGINX_DEPLOYMENT_IP:8443/github-action --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | grep '$GITHUB_RUN_ID'
