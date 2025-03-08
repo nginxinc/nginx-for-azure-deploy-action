@@ -11,9 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@azure/identity": "^2.1.0",
+    "@azure/identity": "^4.7.0",
     "@types/tar": "^6.1.1",
-    "axios": "^0.27.2",
+    "axios": "^1.8.2",
     "azure-pipelines-task-lib": "^4.0.0-preview",
     "fs-extra": "^10.1.0",
     "gunzip-maybe": "^1.4.2",
