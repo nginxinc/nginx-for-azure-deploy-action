@@ -9,7 +9,7 @@ env:
   NGINX_DEPLOYMENT_NAME: github-action-test-dep
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
-  TEST_RESOURCE_GROUP_NAME: testenv-0da38993-workload
+  TEST_RESOURCE_GROUP_NAME: github-action-test
   NGINX_CERT_NAME: github-action-test-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
