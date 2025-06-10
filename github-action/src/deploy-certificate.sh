@@ -7,23 +7,23 @@ do
 case $i in
     --subscription_id=*)
     subscription_id="${i#*=}"
-    shift 
+    shift
     ;;
     --resource_group_name=*)
     resource_group_name="${i#*=}"
-    shift 
+    shift
     ;;
     --nginx_deployment_name=*)
     nginx_deployment_name="${i#*=}"
-    shift 
+    shift
     ;;
     --nginx_resource_location=*)
     nginx_resource_location="${i#*=}"
-    shift 
+    shift
     ;;
     --certificates=*)
     certificates="${i#*=}"
-    shift 
+    shift
     ;;
     *)
     echo "Not matched option '${i#*=}' passed in."
@@ -35,27 +35,27 @@ done
 if [[ ! -v subscription_id ]];
 then
     echo "Please set 'subscription-id' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v resource_group_name ]];
 then
     echo "Please set 'resource-group-name' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v nginx_deployment_name ]];
 then
     echo "Please set 'nginx-deployment-name' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v nginx_resource_location ]];
 then
     echo "Please set 'nginx-resource-location' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v certificates ]];
 then
     echo "Please set 'nginx-certificates' ..."
-    exit 1 
+    exit 1
 fi
 
 arm_template_file="nginx-for-azure-certificate-template.json"
@@ -69,13 +69,13 @@ echo ""
 
 az account set -s "$subscription_id" --verbose
 
-count=$(echo $certificates | jq '. | length')
+count=$(echo "$certificates" | jq '. | length')
 for (( i=0; i<count; i++ ));
 do
-    nginx_cert_name=$(echo $certificates | jq -r '.['"$i"'].certificateName')
-    nginx_cert_file=$(echo $certificates | jq -r '.['"$i"'].certificateVirtualPath')
-    nginx_key_file=$(echo $certificates | jq -r '.['"$i"'].keyVirtualPath')
-    keyvault_secret=$(echo $certificates | jq -r '.['"$i"'].keyvaultSecret')
+    nginx_cert_name=$(echo "$certificates" | jq -r '.['"$i"'].certificateName')
+    nginx_cert_file=$(echo "$certificates" | jq -r '.['"$i"'].certificateVirtualPath')
+    nginx_key_file=$(echo "$certificates" | jq -r '.['"$i"'].keyVirtualPath')
+    keyvault_secret=$(echo "$certificates" | jq -r '.['"$i"'].keyvaultSecret')
 
     do_nginx_arm_deployment=1
     err_msg=" "
@@ -103,9 +103,9 @@ do
     uuid="$(cat /proc/sys/kernel/random/uuid)"
     template_file="template-$uuid.json"
     template_deployment_name="${nginx_deployment_name:0:20}-$uuid"
-    
+
     cp "$arm_template_file" "$template_file"
-    
+
     echo "Synchronizing NGINX certificate"
     echo "Subscription ID: $subscription_id"
     echo "Resource group name: $resource_group_name"
@@ -122,9 +122,9 @@ do
     then
         set +e
         az deployment group create --name "$template_deployment_name" --resource-group "$resource_group_name" --template-file "$template_file" --parameters name="$nginx_cert_name" location="$nginx_resource_location" nginxDeploymentName="$nginx_deployment_name" certificateVirtualPath="$nginx_cert_file" keyVirtualPath="$nginx_key_file" keyVaultSecretID="$keyvault_secret" --verbose
-        set -e  
-    else 
+        set -e
+    else
         echo "Skipping JSON object $i cert deployment with error:$err_msg"
         echo ""
-    fi     
+    fi
 done
