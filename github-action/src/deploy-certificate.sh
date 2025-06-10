@@ -25,6 +25,10 @@ case $i in
     certificates="${i#*=}"
     shift
     ;;
+    --debug=*)
+    debug="${i#*=}"
+    shift
+    ;;
     *)
     echo "Not matched option '${i#*=}' passed in."
     exit 1
@@ -120,8 +124,29 @@ do
 
     if [ $do_nginx_arm_deployment -eq 1 ]
     then
+        az_cmd=(
+            "az"
+            "deployment"
+            "group"
+            "create"
+            "--name" "$template_deployment_name"
+            "--resource-group" "$resource_group_name"
+            "--template-file" "$template_file"
+            "--parameters"
+            "name=$nginx_cert_name"
+            "location=$nginx_resource_location"
+            "nginxDeploymentName=$nginx_deployment_name"
+            "certificateVirtualPath=$nginx_cert_file"
+            "keyVirtualPath=$nginx_key_file"
+            "keyVaultSecretID=$keyvault_secret"
+            "--verbose"
+        )
+        if [[ "$debug" == true ]]; then
+            az_cmd+=("--debug")
+        fi
+        echo "${az_cmd[@]}"
         set +e
-        az deployment group create --name "$template_deployment_name" --resource-group "$resource_group_name" --template-file "$template_file" --parameters name="$nginx_cert_name" location="$nginx_resource_location" nginxDeploymentName="$nginx_deployment_name" certificateVirtualPath="$nginx_cert_file" keyVirtualPath="$nginx_key_file" keyVaultSecretID="$keyvault_secret" --verbose
+        "${az_cmd[@]}"
         set -e
     else
         echo "Skipping JSON object $i cert deployment with error:$err_msg"
