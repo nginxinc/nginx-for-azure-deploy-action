@@ -24,7 +24,7 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v2
       - name: "AZ CLI Login"
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -72,7 +72,7 @@ jobs:
         run: |
           wget -S -q --spider http://${{ secrets.NGINX_DEPLOYMENT_IP }} 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           inlineScript: |
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
