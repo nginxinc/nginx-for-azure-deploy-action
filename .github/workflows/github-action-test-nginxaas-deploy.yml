@@ -33,7 +33,7 @@ jobs:
       - name: "Update config - single file"
         shell: bash
         run: |
-          sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' github-action/test/configs/single/nginx.conf
+          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/single/nginx.conf
           cat github-action/test/configs/single/nginx.conf
       - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
         uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
@@ -47,7 +47,7 @@ jobs:
       - name: "Validate config update - single file"
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_NUMBER"'")'
+          wget -S -q --spider http://${{ secrets.NGINX_DEPLOYMENT_IP }} 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Update config - multi file"
         shell: bash
         run: |
@@ -70,7 +70,7 @@ jobs:
       - name: "Validate config update"
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
+          wget -S -q --spider http://${{ secrets.NGINX_DEPLOYMENT_IP }} 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
         uses: azure/CLI@v1
         with:
@@ -78,4 +78,4 @@ jobs:
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
             az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
             echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-            wget -O - -o /dev/null https://${{ secrets.NGINX_DEPLOYMENT_IP }} --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
+            wget -S -q --spider https://${{ secrets.NGINX_DEPLOYMENT_IP }} --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
