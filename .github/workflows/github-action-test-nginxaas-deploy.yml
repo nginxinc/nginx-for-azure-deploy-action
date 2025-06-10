@@ -47,7 +47,7 @@ jobs:
       - name: "Validate config update - single file"
         shell: bash
         run: |
-          wget -S -q --spider http://${{ secrets.NGINX_DEPLOYMENT_IP }} 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Update config - multi file"
         shell: bash
         run: |
@@ -70,7 +70,7 @@ jobs:
       - name: "Validate config update"
         shell: bash
         run: |
-          wget -S -q --spider http://${{ secrets.NGINX_DEPLOYMENT_IP }} 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
         uses: azure/cli@v2
         with:
@@ -78,4 +78,4 @@ jobs:
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
             az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
             echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-            wget -S -q --spider https://${{ secrets.NGINX_DEPLOYMENT_IP }} --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp 2>&1 | grep "Github-Run-Id: $GITHUB_RUN_ID"
+            curl -s -o /dev/null -D - https://${{ secrets.NGINX_DEPLOYMENT_IP }} --cacert /tmp/$GITHUB_RUN_ID.tmp | grep "Github-Run-Id: $GITHUB_RUN_ID"
