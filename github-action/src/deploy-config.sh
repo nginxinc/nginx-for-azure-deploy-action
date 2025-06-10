@@ -8,27 +8,31 @@ do
 case $i in
     --subscription_id=*)
     subscription_id="${i#*=}"
-    shift 
+    shift
     ;;
     --resource_group_name=*)
     resource_group_name="${i#*=}"
-    shift 
+    shift
     ;;
     --nginx_deployment_name=*)
     nginx_deployment_name="${i#*=}"
-    shift 
+    shift
     ;;
     --config_dir_path=*)
     config_dir_path="${i#*=}"
-    shift 
+    shift
     ;;
     --root_config_file=*)
     root_config_file="${i#*=}"
-    shift 
+    shift
     ;;
     --transformed_config_dir_path=*)
     transformed_config_dir_path="${i#*=}"
-    shift 
+    shift
+    ;;
+    --debug=*)
+    debug="${i#*=}"
+    shift
     ;;
     *)
     echo "Not matched option '${i#*=}' passed in."
@@ -40,27 +44,27 @@ done
 if [[ ! -v subscription_id ]];
 then
     echo "Please set 'subscription-id' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v resource_group_name ]];
 then
     echo "Please set 'resource-group-name' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v nginx_deployment_name ]];
 then
     echo "Please set 'nginx-deployment-name' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v config_dir_path ]];
 then
     echo "Please set 'nginx-config-directory-path' ..."
-    exit 1 
+    exit 1
 fi
 if [[ ! -v root_config_file ]];
 then
     echo "Please set 'nginx-root-config-file' ..."
-    exit 1 
+    exit 1
 fi
 
 # Validation and preprocessing
@@ -78,7 +82,7 @@ fi
 if [[ -d "$config_dir_path" ]]
 then
     echo "The NGINX configuration directory '$config_dir_path' was found."
-else 
+else
     echo "The NGINX configuration directory '$config_dir_path' does not exist."
     exit 1
 fi
@@ -96,7 +100,7 @@ root_config_file_repo_path="$config_dir_path$root_config_file"
 if [[ -f "$root_config_file_repo_path" ]]
 then
     echo "The root NGINX configuration file '$root_config_file_repo_path' was found."
-else 
+else
     echo "The root NGINX configuration file '$root_config_file_repo_path' does not exist."
     exit 1
 fi
@@ -152,4 +156,25 @@ echo "ARM template deployment name: $template_deployment_name"
 echo ""
 
 az account set -s "$subscription_id" --verbose
-az deployment group create --name "$template_deployment_name" --resource-group "$resource_group_name" --template-file "$template_file" --parameters nginxDeploymentName="$nginx_deployment_name" rootFile="$transformed_root_config_file_path" tarball="$encoded_config_tarball" --verbose
+
+az_cmd=(
+    "az"
+    "deployment"
+    "group"
+    "create"
+    "--name" "$template_deployment_name"
+    "--resource-group" "$resource_group_name"
+    "--template-file" "$template_file"
+    "--parameters"
+    "nginxDeploymentName=$nginx_deployment_name"
+    "rootFile=$transformed_root_config_file_path"
+    "tarball=$encoded_config_tarball"
+    "--verbose"
+)
+
+if [[ "$debug" == true ]]; then
+    az_cmd+=("--debug")
+fi
+
+echo "${az_cmd[@]}"
+"${az_cmd[@]}"

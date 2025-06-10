@@ -9,7 +9,7 @@ env:
   NGINX_DEPLOYMENT_NAME: github-action-test-dep
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
-  TEST_RESOURCE_GROUP_NAME: testenv-0da38993-workload
+  TEST_RESOURCE_GROUP_NAME: github-action-test
   NGINX_CERT_NAME: github-action-test-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
@@ -24,7 +24,7 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v2
       - name: "AZ CLI Login"
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -33,7 +33,7 @@ jobs:
       - name: "Update config - single file"
         shell: bash
         run: |
-          sed -i 's/000000/'"$GITHUB_RUN_NUMBER"'/g' github-action/test/configs/single/nginx.conf
+          sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/single/nginx.conf
           cat github-action/test/configs/single/nginx.conf
       - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
         uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
@@ -47,7 +47,7 @@ jobs:
       - name: "Validate config update - single file"
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_NUMBER"'")'
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Update config - multi file"
         shell: bash
         run: |
@@ -70,12 +70,12 @@ jobs:
       - name: "Validate config update"
         shell: bash
         run: |
-          wget -O - -o /dev/null http://${{ secrets.NGINX_DEPLOYMENT_IP }} | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           inlineScript: |
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
             az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
             echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-            wget -O - -o /dev/null https://${{ secrets.NGINX_DEPLOYMENT_IP }} --ca-certificate=/tmp/$GITHUB_RUN_ID.tmp | jq '.request.headers."Github-Run-Id"  | test( "'"$GITHUB_RUN_ID"'")'
+            curl -s -o /dev/null -D - https://${{ secrets.NGINX_DEPLOYMENT_IP }} --cacert /tmp/$GITHUB_RUN_ID.tmp | grep "Github-Run-Id: $GITHUB_RUN_ID"

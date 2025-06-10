@@ -29,12 +29,12 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 'Run Azure Login using an Azure service principal with a secret'
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -69,14 +69,14 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 'Run Azure Login using OIDC'
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -85,6 +85,9 @@ jobs:
         nginx-root-config-file: nginx.conf
         transformed-nginx-config-directory-path: /etc/nginx/
 ```
+
+> **Note:**
+The service principal being used for authenticating with Azure should have access to manage the NGINXaaS deployment. For simplicity, this guide assumes that the service principal has `Contributor` role to manage the deployment. Refer [prerequisites](https://docs.nginx.com/nginxaas/azure/getting-started/prerequisites/) for details.
 
 ## Handling NGINX configuration file paths
 
@@ -101,7 +104,7 @@ To use this action to sync the configuration files from this example, the direct
 
 ```yaml
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -133,7 +136,7 @@ The action supports an optional input `transformed-nginx-config-directory-path` 
 
 ```yaml
     - name: 'Sync the NGINX configuration from the Git repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -151,11 +154,11 @@ The transformed paths of the two configuration files in the NGINXaaS for Azure d
 
 ## Handling NGINX certificates
 
-Since certificates are secrets, it is assumed they are stored in Azure key vault. One can provide multiple certificate entries to the github action as an array of JSON objects with keys: 
+Since certificates are secrets, it is assumed they are stored in Azure key vault. One can provide multiple certificate entries to the github action as an array of JSON objects with keys:
 
 `certificateName`- A unique name for the certificate entry
 
-`keyvaultSecret`- The secret ID for the certificate on Azure key vault 
+`keyvaultSecret`- The secret ID for the certificate on Azure key vault
 
 `certificateVirtualPath`- This path must match one or more ssl_certificate directive file arguments in your Nginx configuration; and must be unique between certificates within the same deployment
 
@@ -165,7 +168,7 @@ See the example below
 
 ```yaml
 - name: "Sync NGINX certificates to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -178,7 +181,7 @@ See the example below
 
 ```yaml
  - name: "Sync NGINX configuration- multi file and certificate to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.0
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
