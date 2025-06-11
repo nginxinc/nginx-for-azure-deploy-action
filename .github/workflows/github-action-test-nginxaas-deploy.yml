@@ -36,7 +36,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/single/nginx.conf
           cat github-action/test/configs/single/nginx.conf
       - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
@@ -56,7 +56,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/multi/conf.d/proxy.conf
           cat github-action/test/configs/multi/conf.d/proxy.conf
       - name: "Sync NGINX configuration and certificate to NGINXaaS for Azure - multi file"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
