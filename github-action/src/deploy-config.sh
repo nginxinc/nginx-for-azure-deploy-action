@@ -177,7 +177,7 @@ az_cmd=(
 
 if [[ "$debug" == true ]]; then
     az_cmd+=("--debug")
+    echo "${az_cmd[@]}"
 fi
 
-echo "${az_cmd[@]}"
 "${az_cmd[@]}"
