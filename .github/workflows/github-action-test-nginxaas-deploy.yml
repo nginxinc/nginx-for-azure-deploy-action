@@ -2,8 +2,7 @@
 
 name: Test Github action to update NGINX as a Service (NGINXaaS) for Azure configurations
 on:
-  schedule:
-    - cron: "0 20 * * *"
+  - push
 
 env:
   NGINX_DEPLOYMENT_NAME: github-action-test-dep
