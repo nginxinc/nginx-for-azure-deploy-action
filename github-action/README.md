@@ -34,7 +34,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+      uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -42,6 +42,7 @@ jobs:
         nginx-config-directory-path: config/
         nginx-root-config-file: nginx.conf
         transformed-nginx-config-directory-path: /etc/nginx/
+        debug: false
 ```
 
 ### Sample workflow that authenticates with Azure using OIDC
@@ -76,7 +77,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+      uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -84,6 +85,7 @@ jobs:
         nginx-config-directory-path: config/
         nginx-root-config-file: nginx.conf
         transformed-nginx-config-directory-path: /etc/nginx/
+        debug: false
 ```
 
 > **Note:**
@@ -104,13 +106,14 @@ To use this action to sync the configuration files from this example, the direct
 
 ```yaml
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+      uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
         nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
         nginx-config-directory-path: config/
         nginx-root-config-file: nginx.conf
+        debug: false
 ```
 
 By default, the action uses a file's relative path to `nginx-config-directory-path` in the repository as the file path in the NGINXaaS for Azure deployment.
@@ -136,7 +139,7 @@ The action supports an optional input `transformed-nginx-config-directory-path` 
 
 ```yaml
     - name: 'Sync the NGINX configuration from the Git repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+      uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -144,6 +147,7 @@ The action supports an optional input `transformed-nginx-config-directory-path` 
         nginx-config-directory-path: config/
         nginx-root-config-file: nginx.conf
         transformed-nginx-config-directory-path: /etc/nginx/
+        debug: false
 ```
 The transformed paths of the two configuration files in the NGINXaaS for Azure deployment are summarized in the following table
 
@@ -168,20 +172,21 @@ See the example below
 
 ```yaml
 - name: "Sync NGINX certificates to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
           nginx-deployment-location: ${{ secrets.NGINX_DEPLOYMENT_LOCATION }}
           nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/my-cert.key"  } ]'
+          debug: false
 ```
 
 ## Handling NGINX configuration and certificates
 
 ```yaml
  - name: "Sync NGINX configuration- multi file and certificate to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.3.1
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -191,4 +196,5 @@ See the example below
           nginx-root-config-file: nginx.conf
           transformed-nginx-config-directory-path: /etc/nginx/
           nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/my-cert.key"  } ]'
+          debug: false
 ```
