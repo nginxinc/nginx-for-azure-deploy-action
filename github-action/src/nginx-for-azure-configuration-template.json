@@ -26,7 +26,7 @@
     "resources": [
         {
             "type": "NGINX.NGINXPLUS/nginxDeployments/configurations",
-            "apiVersion": "2021-05-01-preview",
+            "apiVersion": "2024-11-01-preview",
             "name": "[concat(parameters('nginxDeploymentName'), '/default')]",
             "properties": {
                 "rootFile": "[parameters('rootFile')]",

@@ -42,7 +42,7 @@
   "resources": [
     {
       "type": "NGINX.NGINXPLUS/nginxDeployments/certificates",
-      "apiVersion": "2021-05-01-preview",
+      "apiVersion": "2024-11-01-preview",
       "name": "[concat(parameters('nginxDeploymentName'), concat('/', parameters('name')))]",
       "location": "[parameters('location')]",
       "properties": {
