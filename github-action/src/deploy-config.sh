@@ -133,8 +133,11 @@ echo "Listing the NGINX configuration file paths in the tarball."
 tar -tf "$config_tarball"
 
 encoded_config_tarball=$(base64 "$config_tarball")
-echo "The base64 encoded NGINX configuration tarball"
-echo "$encoded_config_tarball"
+
+if [[ "$debug" == true ]]; then
+    echo "The base64 encoded NGINX configuration tarball"
+    echo "$encoded_config_tarball"
+fi
 echo ""
 
 # Synchronize the NGINX configuration tarball to the NGINXaaS for Azure deployment.
@@ -174,7 +177,7 @@ az_cmd=(
 
 if [[ "$debug" == true ]]; then
     az_cmd+=("--debug")
+    echo "${az_cmd[@]}"
 fi
 
-echo "${az_cmd[@]}"
 "${az_cmd[@]}"

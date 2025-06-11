@@ -143,8 +143,8 @@ do
         )
         if [[ "$debug" == true ]]; then
             az_cmd+=("--debug")
+            echo "${az_cmd[@]}"
         fi
-        echo "${az_cmd[@]}"
         set +e
         "${az_cmd[@]}"
         set -e

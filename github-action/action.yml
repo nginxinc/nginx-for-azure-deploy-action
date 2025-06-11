@@ -13,6 +13,7 @@ inputs:
   nginx-deployment-location:
     description: "The location where the NGINX deployment is located. Example westcentralus"
     required: false
+    deprecationMessage: "This field is not in use and will be removed in a future release. Consider dropping it from your Github Action configuration."
   nginx-config-directory-path:
     description: 'The NGINX configuration directory path relative to the root of the Git repository, example: "config/".'
     required: false
