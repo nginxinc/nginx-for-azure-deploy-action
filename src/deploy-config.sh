@@ -1,32 +1,32 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 IFS=$'\n\t'
 
 transformed_config_dir_path=''
 for i in "$@"
 do
 case $i in
-    --subscription_id=*)
+    --subscription-id=*)
     subscription_id="${i#*=}"
     shift
     ;;
-    --resource_group_name=*)
+    --resource-group-name=*)
     resource_group_name="${i#*=}"
     shift
     ;;
-    --nginx_deployment_name=*)
+    --nginx-deployment-name=*)
     nginx_deployment_name="${i#*=}"
     shift
     ;;
-    --config_dir_path=*)
+    --nginx-config-directory-path=*)
     config_dir_path="${i#*=}"
     shift
     ;;
-    --root_config_file=*)
+    --nginx-root-config-file=*)
     root_config_file="${i#*=}"
     shift
     ;;
-    --transformed_config_dir_path=*)
+    --transformed-nginx-config-directory-path=*)
     transformed_config_dir_path="${i#*=}"
     shift
     ;;
@@ -34,36 +34,39 @@ case $i in
     debug="${i#*=}"
     shift
     ;;
+    --protected-files=*)
+    protected_files="${i#*=}"
+    shift
+    ;;
     *)
-    echo "Not matched option '${i#*=}' passed in."
+    echo "Unknown option '${i}' passed in."
     exit 1
     ;;
 esac
 done
 
-if [[ ! -v subscription_id ]];
-then
-    echo "Please set 'subscription-id' ..."
-    exit 1
+# Validate Required Parameters
+missing_params=()
+if [ -z "$subscription_id" ]; then
+    missing_params+=("subscription-id")
 fi
-if [[ ! -v resource_group_name ]];
-then
-    echo "Please set 'resource-group-name' ..."
-    exit 1
+if [ -z "$resource_group_name" ]; then
+    missing_params+=("resource-group-name")
 fi
-if [[ ! -v nginx_deployment_name ]];
-then
-    echo "Please set 'nginx-deployment-name' ..."
-    exit 1
+if [ -z "$nginx_deployment_name" ]; then
+    missing_params+=("nginx-deployment-name")
 fi
-if [[ ! -v config_dir_path ]];
-then
-    echo "Please set 'nginx-config-directory-path' ..."
-    exit 1
+if [ -z "$config_dir_path" ]; then
+    missing_params+=("nginx-config-directory-path")
 fi
-if [[ ! -v root_config_file ]];
-then
-    echo "Please set 'nginx-root-config-file' ..."
+if [ -z "$root_config_file" ]; then
+    missing_params+=("nginx-root-config-file")
+fi
+
+# Check and print if any required params are missing
+if [ ${#missing_params[@]} -gt 0 ]; then
+    echo "Error: Missing required variables in the workflow:"
+    echo "${missing_params[*]}"
     exit 1
 fi
 
@@ -159,13 +162,48 @@ az_cmd=(
     "deployment"
     "configuration"
     "update"
+    "--verbose"
     "--name" "default"
     "--deployment-name" "$nginx_deployment_name"
     "--resource-group" "$resource_group_name"
     "--root-file" "$transformed_root_config_file_path"
     "--package" "data=$encoded_config_tarball"
-    "--verbose"
 )
+
+# Function to trim whitespace from a string
+trim_whitespace() {
+    local var="$1"
+    # Trim leading whitespace from the file path (var)
+    # ${var%%[![:space:]]*} starts at the file path's end
+    # and finds the longest match of non-whitespace
+    # characters leaving only leading whitespaces
+    # ${var#"..." } removes the leading whitespace found
+    var="${var#"${var%%[![:space:]]*}"}"
+    # Remove trailing whitespace
+    # See explanation above. The process is reversed here.
+    var="${var%"${var##*[![:space:]]}"}"
+    # Check if the file exists in the repository
+    echo "$var"
+}
+
+# Add protected-files parameter if provided
+if [[ -n "$protected_files" ]]; then
+    # Convert comma-separated list to JSON array format
+    IFS=',' read -ra files <<< "$protected_files"
+    json_array="["
+    for i in "${files[@]}"; do
+        # Trim whitespace and add quotes
+        file_path="$(trim_whitespace "$i")"
+        if [[ "$json_array" != "[" ]]; then
+            json_array+=","
+        fi
+        json_array+="\"$transformed_config_dir_path$file_path\""
+    done
+    json_array+="]"
+    
+    az_cmd+=("protected-files=$json_array")
+    echo "Protected files: $json_array"
+fi
 
 if [[ "$debug" == true ]]; then
     az_cmd+=("--debug")
