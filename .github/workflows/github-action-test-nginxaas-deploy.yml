@@ -6,10 +6,10 @@ on:
     - cron: "0 20 * * *"
 
 env:
-  NGINX_DEPLOYMENT_NAME: github-action-test-dep
+  NGINX_DEPLOYMENT_NAME: n4a-long-eastus2-basic-ngx
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
-  TEST_RESOURCE_GROUP_NAME: github-action-test
+  TEST_RESOURCE_GROUP_NAME: n4a-long-eastus2-workload
   NGINX_CERT_NAME: github-action-test-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
@@ -61,7 +61,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
           nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-deployment-location: "westcentralus"
+          nginx-deployment-location: "eastus2"
           nginx-config-directory-path: github-action/test/configs/multi/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
