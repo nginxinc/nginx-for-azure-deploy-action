@@ -9,7 +9,7 @@
             "id": "Microsoft.VisualStudio.Services"
         }
     ],    
-    "description": "This extension provides a streamlined solution for synchronizing NGINX configuration files with Azure deployments. Designed to support Azure DevOps pipelines, it automates the process of packaging and uploading NGINX configurations to Azure, enhancing efficiency, version control, and security. Ideal for continuous integration and deployment workflows, it simplifies the management of NGINXaaS configurations within the Azure ecosystem.",
+    "description": "This extension provides a streamlined solution for synchronizing NGINX configuration files with Azure deployments.",
     "categories": [
         "Azure Pipelines"
     ],
