@@ -10,6 +10,7 @@ env:
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
   TEST_RESOURCE_GROUP_NAME: n4a-long-eastus2-workload
+  TEST_SECURITY_GROUP_NAME: n4a-long-eastus2-workload-pub
   NGINX_CERT_NAME: n4a-long-eastus2-basic-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
@@ -29,7 +30,24 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
+      - name: get runner ip addresses
+        id: ip
+        uses: haythem/public-ip@v1.3
+      - name: allow runner ip access to the longivity deployment
+        shell: bash
+        run: |
+          az network nsg rule create \
+            --resource-group  "$TEST_RESOURCE_GROUP_NAME"\
+            --nsg-name "$TEST_SECURITY_GROUP_NAME"\
+            --name allow_github_runner_access \
+            --priority 1003 \
+            --direction Inbound \
+            --access Allow \
+            --protocol Tcp \
+            --source-address-prefixes "${{ steps.ip.outputs.ipv4 }}/32" \
+            --source-port-ranges "*" \
+            --destination-address-prefixes "*" \
+            --destination-port-ranges 80 443
       - name: "Update config - single file"
         shell: bash
         run: |
