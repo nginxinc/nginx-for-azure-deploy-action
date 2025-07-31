@@ -6,11 +6,11 @@ on:
     - cron: "0 20 * * *"
 
 env:
-  NGINX_DEPLOYMENT_NAME: n4a-long-eastus2-basic-ngx
+  NGINX_DEPLOYMENT_NAME: github-action-test-dep
   NGINX_TRANSFORMED_CONFIG_DIR_PATH: /etc/nginx/
   NGINX_ROOT_CONFIG_FILE: nginx.conf
-  TEST_RESOURCE_GROUP_NAME: n4a-long-eastus2-workload
-  NGINX_CERT_NAME: n4a-long-eastus2-basic-crt
+  TEST_RESOURCE_GROUP_NAME: github-action-test
+  NGINX_CERT_NAME: github-action-test-crt
   NGINX_VAULT_NAME: nlbtest-customer
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: "AZ CLI Login"
         uses: azure/login@v2
         with:
@@ -47,7 +47,7 @@ jobs:
       - name: "Validate config update - single file"
         shell: bash
         run: |
-          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_FQDN }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Update config - multi file"
         shell: bash
         run: |
@@ -61,15 +61,16 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
           nginx-deployment-name: $NGINX_DEPLOYMENT_NAME
-          nginx-deployment-location: "eastus2"
+          nginx-deployment-location: "westcentralus"
           nginx-config-directory-path: github-action/test/configs/multi/
           nginx-root-config-file: $NGINX_ROOT_CONFIG_FILE
           transformed-nginx-config-directory-path: $NGINX_TRANSFORMED_CONFIG_DIR_PATH
-          nginx-certificates: '[{"certificateName": "github-action-test-crt", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
+          nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/$GITHUB_RUN_ID/my-cert.key"  } ]'
+
       - name: "Validate config update"
         shell: bash
         run: |
-          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_FQDN }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
+          curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
         uses: azure/cli@v2
         with:
@@ -77,4 +78,4 @@ jobs:
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp
             az keyvault certificate show --vault-name $NGINX_VAULT_NAME  -n $NGINX_CERT_NAME | jq -r .cer | cat >> /tmp/$GITHUB_RUN_ID.tmp
             echo "-----END CERTIFICATE-----" >> /tmp/$GITHUB_RUN_ID.tmp
-            curl -s -o /dev/null -D - https://${{ secrets.NGINX_DEPLOYMENT_FQDN }} --cacert /tmp/$GITHUB_RUN_ID.tmp | grep "Github-Run-Id: $GITHUB_RUN_ID"
+            curl -s -o /dev/null -D - https://${{ secrets.NGINX_DEPLOYMENT_IP }} --cacert /tmp/$GITHUB_RUN_ID.tmp | grep "Github-Run-Id: $GITHUB_RUN_ID"
