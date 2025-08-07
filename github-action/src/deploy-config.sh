@@ -132,7 +132,7 @@ echo "Successfully created the tarball from the NGINX configuration directory."
 echo "Listing the NGINX configuration file paths in the tarball."
 tar -tf "$config_tarball"
 
-encoded_config_tarball=$(base64 "$config_tarball")
+encoded_config_tarball=$(base64 "$config_tarball" -w 0)
 
 if [[ "$debug" == true ]]; then
     echo "The base64 encoded NGINX configuration tarball"
@@ -142,36 +142,28 @@ echo ""
 
 # Synchronize the NGINX configuration tarball to the NGINXaaS for Azure deployment.
 
-uuid="$(cat /proc/sys/kernel/random/uuid)"
-template_file="template-$uuid.json"
-template_deployment_name="${nginx_deployment_name:0:20}-$uuid"
-
-wget -O "$template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/487d1394d6115d4f42ece6200cbd20859595557d/src/nginx-for-azure-configuration-template.json
-echo "Downloaded the ARM template for synchronizing NGINX configuration."
-cat "$template_file"
-echo ""
-
 echo "Synchronizing NGINX configuration"
 echo "Subscription ID: $subscription_id"
 echo "Resource group name: $resource_group_name"
 echo "NGINXaaS for Azure deployment name: $nginx_deployment_name"
-echo "ARM template deployment name: $template_deployment_name"
 echo ""
 
 az account set -s "$subscription_id" --verbose
 
+echo "Installing the az nginx extension if not already installed."
+az extension add --name nginx --allow-preview true
+
 az_cmd=(
     "az"
+    "nginx"
     "deployment"
-    "group"
-    "create"
-    "--name" "$template_deployment_name"
+    "configuration"
+    "update"
+    "--name" "default"
+    "--deployment-name" "$nginx_deployment_name"
     "--resource-group" "$resource_group_name"
-    "--template-file" "$template_file"
-    "--parameters"
-    "nginxDeploymentName=$nginx_deployment_name"
-    "rootFile=$transformed_root_config_file_path"
-    "tarball=$encoded_config_tarball"
+    "--root-file" "$transformed_root_config_file_path"
+    "--package" "data=$encoded_config_tarball"
     "--verbose"
 )
 
