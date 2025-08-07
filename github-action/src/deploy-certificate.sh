@@ -17,10 +17,6 @@ case $i in
     nginx_deployment_name="${i#*=}"
     shift
     ;;
-    --nginx_resource_location=*)
-    nginx_resource_location="${i#*=}"
-    shift
-    ;;
     --certificates=*)
     certificates="${i#*=}"
     shift
@@ -51,25 +47,11 @@ then
     echo "Please set 'nginx-deployment-name' ..."
     exit 1
 fi
-if [[ ! -v nginx_resource_location ]];
-then
-    echo "Please set 'nginx-resource-location' ..."
-    exit 1
-fi
 if [[ ! -v certificates ]];
 then
     echo "Please set 'nginx-certificates' ..."
     exit 1
 fi
-
-arm_template_file="nginx-for-azure-certificate-template.json"
-
-#get the ARM template file
-wget -O "$arm_template_file" https://raw.githubusercontent.com/nginxinc/nginx-for-azure-deploy-action/a69d33feaa1a8a012ec44c138ca78c6ec4db9f29/src/nginx-for-azure-certificate-template.json
-echo "Downloaded the ARM template for synchronizing NGINX certificate."
-
-cat "$arm_template_file"
-echo ""
 
 az account set -s "$subscription_id" --verbose
 
@@ -104,41 +86,33 @@ do
         do_nginx_arm_deployment=0
     fi
 
-    uuid="$(cat /proc/sys/kernel/random/uuid)"
-    template_file="template-$uuid.json"
-    template_deployment_name="${nginx_deployment_name:0:20}-$uuid"
-
-    cp "$arm_template_file" "$template_file"
-
     echo "Synchronizing NGINX certificate"
     echo "Subscription ID: $subscription_id"
     echo "Resource group name: $resource_group_name"
     echo "NGINXaaS for Azure deployment name: $nginx_deployment_name"
-    echo "NGINXaaS for Azure Location: $nginx_resource_location"
-    echo "ARM template deployment name: $template_deployment_name"
     echo ""
     echo "NGINXaaS for Azure cert name: $nginx_cert_name"
     echo "NGINXaaS for Azure cert file location: $nginx_cert_file"
     echo "NGINXaaS for Azure key file location: $nginx_key_file"
     echo ""
 
+    echo "Installing the az nginx extension if not already installed."
+    az extension add --name nginx --allow-preview true
+
     if [ $do_nginx_arm_deployment -eq 1 ]
     then
         az_cmd=(
             "az"
+            "nginx"
             "deployment"
-            "group"
+            "certificate"
             "create"
-            "--name" "$template_deployment_name"
             "--resource-group" "$resource_group_name"
-            "--template-file" "$template_file"
-            "--parameters"
-            "name=$nginx_cert_name"
-            "location=$nginx_resource_location"
-            "nginxDeploymentName=$nginx_deployment_name"
-            "certificateVirtualPath=$nginx_cert_file"
-            "keyVirtualPath=$nginx_key_file"
-            "keyVaultSecretID=$keyvault_secret"
+            "--certificate-name" "$nginx_cert_name"
+            "--deployment-name" "$nginx_deployment_name"
+            "--certificate-path" "$nginx_cert_file"
+            "--key-path" "$nginx_key_file"
+            "--key-vault-secret-id" "$keyvault_secret"
             "--verbose"
         )
         if [[ "$debug" == true ]]; then

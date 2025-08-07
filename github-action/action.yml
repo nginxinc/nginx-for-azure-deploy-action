@@ -10,10 +10,6 @@ inputs:
   nginx-deployment-name:
     description: "The name of the NGINXaaS for Azure deployment."
     required: true
-  nginx-deployment-location:
-    description: "The location where the NGINX deployment is located. Example westcentralus"
-    required: false
-    deprecationMessage: "This field is not in use and will be removed in a future release. Consider dropping it from your Github Action configuration."
   nginx-config-directory-path:
     description: 'The NGINX configuration directory path relative to the root of the Git repository, example: "config/".'
     required: false
@@ -40,8 +36,8 @@ runs:
   using: "composite"
   steps:
     - name: "Synchronize NGINX certificate(s) from the Git repository to an NGINXaaS for Azure deployment"
-      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --nginx_resource_location=${{ inputs.nginx-deployment-location }}  --certificates=${{ toJSON(inputs.nginx-certificates) }} --debug=${{ inputs.debug }}
-      if: ${{ inputs.nginx-deployment-location != '' && inputs.nginx-certificates != '' }}
+      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --certificates=${{ toJSON(inputs.nginx-certificates) }} --debug=${{ inputs.debug }}
+      if: ${{ inputs.nginx-certificates != '' }}
       shell: bash
     - name: "Synchronize NGINX configuration from the Git repository to an NGINXaaS for Azure deployment"
       run: ${{github.action_path}}/src/deploy-config.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --config_dir_path=${{ inputs.nginx-config-directory-path }} --root_config_file=${{ inputs.nginx-root-config-file }} --transformed_config_dir_path=${{ inputs.transformed-nginx-config-directory-path }} --debug=${{ inputs.debug }}
