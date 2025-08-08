@@ -27,7 +27,7 @@ inputs:
     required: false
     default: ""
   nginx-certificates:
-    description: 'An array of JSON objects each with keys nginx_cert_name, keyvault_secret, certificate_virtual_path and key_virtual_path. Example: [{"certificateName": "server1", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/ssl/certs/server1.crt", "keyVirtualPath": "/etc/ssl/certs/server1.key"  }, {"name": "server2", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/ssl/certs/server2.crt", "keyVirtualPath": "/etc/ssl/certs/server2.key"  }] '
+    description: 'An array of JSON objects each with keys nginx_cert_name, keyvault_secret, certificate_virtual_path and key_virtual_path. Example: [{"certificateName": "server1", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/nginx/certs/server1.crt", "keyVirtualPath": "/etc/nginx/certs/server1.key"  }, {"name": "server2", "keyvaultSecret": "https://...", "certificateVirtualPath": "/etc/nginx/certs/server2.crt", "keyVirtualPath": "/etc/nginx/certs/server2.key"  }] '
     required: false
   protected-files:
     description: "Comma-separated list of file paths relative to nginx-config-directory-path that should be marked as protected. Example: 'ssl/private.key,conf.d/secrets.conf'"
@@ -41,7 +41,7 @@ runs:
   using: "composite"
   steps:
     - name: "Synchronize NGINX certificate(s) from the Git repository to an NGINXaaS for Azure deployment"
-      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription_id=${{ inputs.subscription-id }} --resource_group_name=${{ inputs.resource-group-name }} --nginx_deployment_name=${{ inputs.nginx-deployment-name }} --certificates=${{ toJSON(inputs.nginx-certificates) }} --debug=${{ inputs.debug }}
+      run: ${{github.action_path}}/src/deploy-certificate.sh --subscription-id=${{ inputs.subscription-id }} --resource-group-name=${{ inputs.resource-group-name }} --nginx-deployment-name=${{ inputs.nginx-deployment-name }} --certificates=${{ toJSON(inputs.nginx-certificates) }} --debug=${{ inputs.debug }}
       if: ${{ inputs.nginx-certificates != '' }}
       shell: bash
     - name: "Synchronize NGINX configuration from the Git repository to an NGINXaaS for Azure deployment"
