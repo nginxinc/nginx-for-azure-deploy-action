@@ -1,6 +1,6 @@
 # NGINXaaS for Azure Deployment Action
 
-This action supports managing the configuration of an [NGINXaaS for Azure](https://docs.nginx.com/nginxaas/azure/quickstart/overview/) deployment in a GitHub repository. It enables continuous deployment through GitHub workflows to automatically update the NGINXaaS for Azure deployment when changes are made to the NGINX configuration files stored in the repository. Additionally, one can update NGINX certificates that are already present in Azure key vault.
+This action supports managing the configuration and certificates of an [NGINXaaS for Azure](https://docs.nginx.com/nginxaas/azure/quickstart/overview/) deployment in a GitHub repository. It enables continuous deployment through GitHub workflows to automatically update the NGINXaaS for Azure deployment when changes are made to the NGINX configuration files stored in the repository. Additionally, one can update NGINX certificates that are already present in Azure key vault.
 
 ## Connecting to Azure
 
@@ -34,7 +34,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -77,7 +77,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -106,7 +106,7 @@ To use this action to sync the configuration files from this example, the direct
 
 ```yaml
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -139,7 +139,7 @@ The action supports an optional input `transformed-nginx-config-directory-path` 
 
 ```yaml
     - name: 'Sync the NGINX configuration from the Git repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -172,7 +172,7 @@ See the example below
 
 ```yaml
 - name: "Sync NGINX certificates to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -186,7 +186,7 @@ See the example below
 
 ```yaml
  - name: "Sync NGINX configuration- multi file and certificate to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.1
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
