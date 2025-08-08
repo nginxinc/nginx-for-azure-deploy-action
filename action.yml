@@ -1,5 +1,5 @@
 name: "NGINXaaS for Azure Deployment Sync"
-description: "The action synchronizes NGINX configuration from a Git repository and/or certificates already on Azure keyvault to an NGINXaaS for Azure deployment"
+description: "Sync NGINX configuration from a git repo and/or certificates from an Azure Key Vault to an NGINXaaS for Azure deployment"
 inputs:
   subscription-id:
     description: "The Azure subscription ID of the NGINXaaS for Azure deployment."
