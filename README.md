@@ -34,7 +34,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -77,7 +77,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -106,7 +106,7 @@ To use this action to sync the configuration files from this example, the direct
 
 ```yaml
     - name: 'Sync the NGINX configuration from the GitHub repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -139,7 +139,7 @@ The action supports an optional input `transformed-nginx-config-directory-path` 
 
 ```yaml
     - name: 'Sync the NGINX configuration from the Git repository to the NGINXaaS for Azure deployment'
-      uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
       with:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -172,7 +172,7 @@ See the example below
 
 ```yaml
 - name: "Sync NGINX certificates to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
@@ -186,7 +186,7 @@ See the example below
 
 ```yaml
  - name: "Sync NGINX configuration- multi file and certificate to NGINXaaS for Azure"
-        uses: nginxinc/nginx-for-azure-deploy-action@v0.4.2
+        uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
