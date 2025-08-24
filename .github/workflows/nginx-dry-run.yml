@@ -1,0 +1,30 @@
+name: "NGINX Config Dry-Run Validation"
+
+on:
+  pull_request:
+    paths:
+      - "test/configs/**"
+
+jobs:
+  dry-run-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run NGINX dry-run validation
+        uses: ./  # local action in this repo; replace with nginxinc/nginx-for-azure-deploy-action@feature/dry-run if pushed to branch
+        with:
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          nginx-deployment-name: ${{ secrets.NGINX_SERVICE_NAME }}
+          nginx-config-directory-path: test/configs/
+          nginx-root-config-file: nginx.conf
+          dry-run: true
+
+      - name: Upload dry-run logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: nginx-dry-run-report
+          path: dry-run.log
