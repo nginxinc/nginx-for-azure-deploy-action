@@ -1,0 +1,52 @@
+name: NGINX Config Dry Run
+
+on:
+  pull_request:
+    paths:
+      - "test/configs/**"   # trigger on any change under test/configs
+
+env:
+  DRY_RUN_ENABLED: "true"   # Toggle this to "false" to disable dry-run
+
+jobs:
+  nginx-dry-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install NGINX
+        if: env.DRY_RUN_ENABLED == 'true'   # Only install if dry-run is enabled
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+          
+      - name: Copy proxy.conf to /etc/nginx/conf.d/
+        run: |
+          sudo mkdir -p /etc/nginx/conf.d
+          sudo cp test/configs/multi/conf.d/proxy.conf /etc/nginx/conf.d/proxy.conf
+          
+      - name: Run NGINX config dry-run for all configs
+        if: env.DRY_RUN_ENABLED == 'true'   # Only run dry-run if enabled
+        continue-on-error: true             # Non-blocking
+        run: |
+          echo "Running nginx -t for all configs under test/configs" | tee nginx-dry-run.log
+          CONF_FILES=$(find "$GITHUB_WORKSPACE/test/configs" -type f -name "*.conf" ! -path "*/conf.d/*")
+
+          if [ -z "$CONF_FILES" ]; then
+            echo "No .conf files found under test/configs" | tee -a nginx-dry-run.log
+          else
+            for file in $CONF_FILES; do
+              echo "---------------------------------" | tee -a nginx-dry-run.log
+              echo "Validating: $file" | tee -a nginx-dry-run.log
+              sudo nginx -t -c "$file" 2>&1 | tee -a nginx-dry-run.log
+            done
+          fi
+
+      - name: Upload dry-run results
+        if: env.DRY_RUN_ENABLED == 'true' || always()   # Upload log if dry-run was run OR always
+        uses: actions/upload-artifact@v4
+        with:
+          name: nginx-dry-run-report
+          path: nginx-dry-run.log
