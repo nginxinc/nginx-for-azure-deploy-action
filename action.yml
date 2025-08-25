@@ -37,21 +37,6 @@ inputs:
     description: "Enable/Disable debug output."
     required: false
     default: "false"
-
-    dry-run:
-      description: "validate config only  (no deploy)"
-      required: false
-      default: "false"
-
-    analysis-output:
-      description: "path to write analyzer JSON"
-      required: false
-      default: ".nginx-analysis.json"
-
-    fail-on-validation-error:
-       description: "fail when validationfinds errors"
-       required: false
-       default: "false"    
 runs:
   using: "composite"
   steps:
@@ -59,37 +44,7 @@ runs:
       run: ${{github.action_path}}/src/deploy-certificate.sh --subscription-id=${{ inputs.subscription-id }} --resource-group-name=${{ inputs.resource-group-name }} --nginx-deployment-name=${{ inputs.nginx-deployment-name }} --certificates=${{ toJSON(inputs.nginx-certificates) }} --debug=${{ inputs.debug }}
       if: ${{ inputs.nginx-certificates != '' }}
       shell: bash
-      # --- DRY-RUN validation steps ---
-    - name: Package NGINX config for dry-run
-      if: ${{ inputs.dry-run == 'true' }}
-      shell: bash
-      run: |
-       set -e
-       tar czf package.tgz "${{ inputs.nginx-config-directory-path }}"
-       base64 -w0 package.tgz > package.b64
-       echo "PKG_JSON={data:$(cat package.b64)}" >> "$GITHUB_ENV"
-    - name: Analyze configuration (dry-run)
-      if: ${{ inputs.dry-run == 'true' }}
-      shell: bash
-      run: |
-       set +e
-       az extension add --name nginx -y >/dev/null 2>&1 || true
-       az nginx deployment configuration analyze \
-         --deployment-name "${{ inputs.nginx-deployment-name }}" \
-         --resource-group "${{ inputs.resource-group-name }}" \
-         --configuration-name default \
-         --root-file "${{ inputs.nginx-root-config-file }}" \
-         --package "${{ env.PKG_JSON }}" \
-         --output json | tee "${{ inputs.analysis-output }}"
-       STATUS=${PIPESTATUS[0]}
-       set -e
-       echo "validation_exit_code=$STATUS" >> "$GITHUB_OUTPUT"
-       if [ "${{ inputs.fail-on-validation-error }}" = "true" ] && [ "$STATUS" -ne 0 ]; then
-         exit 1
-       fi
-       
     - name: "Synchronize NGINX configuration from the Git repository to an NGINXaaS for Azure deployment"
-      if: ${{ inputs.dry-run != 'true' }}
       run: ${{github.action_path}}/src/deploy-config.sh --subscription-id=${{ inputs.subscription-id }} --resource-group-name=${{ inputs.resource-group-name }} --nginx-deployment-name=${{ inputs.nginx-deployment-name }} --nginx-config-directory-path=${{ inputs.nginx-config-directory-path }} --nginx-root-config-file=${{ inputs.nginx-root-config-file }} --transformed-nginx-config-directory-path=${{ inputs.transformed-nginx-config-directory-path }} --protected-files=${{ inputs.protected-files }} --debug=${{ inputs.debug }}
       if: ${{ inputs.nginx-config-directory-path != '' }}
       shell: bash
