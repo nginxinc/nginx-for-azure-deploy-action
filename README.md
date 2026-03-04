@@ -198,3 +198,22 @@ See the example below
           nginx-certificates: '[{"certificateName": "$NGINX_CERT_NAME", "keyvaultSecret": "https://$NGINX_VAULT_NAME.vault.azure.net/secrets/$NGINX_CERT_NAME", "certificateVirtualPath": "/etc/nginx/ssl/my-cert.crt", "keyVirtualPath": "/etc/nginx/ssl/my-cert.key"  } ]'
           debug: false
 ```
+
+## Handling Protected files in the configuration
+
+For files that contain any sensitive data, you can mark them as protected. You cannot access the file contents of a protected file saved to the NGINX configuration, but you can view its metadata. The input for protected files takes a comma-separated list of file paths relative to nginx-config-directory-path that should be marked as protected.
+
+```yaml
+- name: "Sync NGINX configuration- mark protected files in NGINXaaS for Azure"
+      uses: nginxinc/nginx-for-azure-deploy-action@v0.5.0
+      with:
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+        nginx-deployment-name: ${{ secrets.NGINX_DEPLOYMENT_NAME }}
+        nginx-deployment-location: ${{ secrets.NGINX_DEPLOYMENT_LOCATION }}
+        nginx-config-directory-path: config/
+        nginx-root-config-file: nginx.conf
+        transformed-nginx-config-directory-path: /etc/nginx/
+        protected-files: 'servers/server1.conf,conf.d/sensitive.conf'
+        debug: false
+```
