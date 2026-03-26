@@ -22,9 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: "AZ CLI Login"
-        uses: azure/login@v2
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -36,7 +36,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/single/nginx.conf
           cat github-action/test/configs/single/nginx.conf
       - name: "Sync NGINX configuration to NGINXaaS for Azure - single file"
-        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@5ad0d6a4d4c104d2a80e2d6e2a64d19d1772ee11 # v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
@@ -56,7 +56,7 @@ jobs:
           sed -i 's/000000/'"$GITHUB_RUN_ID"'/g' github-action/test/configs/multi/conf.d/proxy.conf
           cat github-action/test/configs/multi/conf.d/proxy.conf
       - name: "Sync NGINX configuration and certificate to NGINXaaS for Azure - multi file"
-        uses: nginxinc/nginx-for-azure-deploy-action/github-action@v0.4.0
+        uses: nginxinc/nginx-for-azure-deploy-action/github-action@5ad0d6a4d4c104d2a80e2d6e2a64d19d1772ee11 # v0.4.0
         with:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: $TEST_RESOURCE_GROUP_NAME
@@ -72,7 +72,7 @@ jobs:
         run: |
           curl -s -o /dev/null -D - http://${{ secrets.NGINX_DEPLOYMENT_IP }} | grep "Github-Run-Id: $GITHUB_RUN_ID"
       - name: "Validate certificate update"
-        uses: azure/cli@v2
+        uses: azure/cli@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956 # v2
         with:
           inlineScript: |
             echo "-----BEGIN CERTIFICATE-----" > /tmp/$GITHUB_RUN_ID.tmp

@@ -8,6 +8,6 @@ jobs:
     name: ShellCheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: Run ShellCheck
-        uses: bewuethr/shellcheck-action@v2
+        uses: bewuethr/shellcheck-action@80bac2daa9fcf95d648200a793d00060857e6dc4 # v2
